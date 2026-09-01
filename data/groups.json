@@ -1,0 +1,1062 @@
+{
+  "_meta": {
+    "purpose": "台灣醫院背後經營體系（法人主體／財團／宗教團體／公部門）對照表",
+    "compiled_by": "人工彙整自各體系官方網站與公開資料；hospital 與 group 的連結由院所全名中的法人名稱自動比對",
+    "kind_values": [
+      "企業財團",
+      "宗教（佛教）",
+      "宗教（基督教長老教會）",
+      "宗教（基督教）",
+      "宗教（基督教門諾會）",
+      "宗教（基督教復臨安息日會）",
+      "宗教（天主教）",
+      "宗教（道教／民間信仰）",
+      "大學醫療體系",
+      "大學醫療體系（天主教）",
+      "國立大學（教育部）",
+      "公立（中央：退輔會）",
+      "公立（中央：國防部）",
+      "公立（中央：衛福部）",
+      "公立（中央：法務部）",
+      "公立（地方政府）",
+      "私人醫療法人",
+      "社會慈善財團法人",
+      "產業公益財團法人",
+      "農會／合作事業"
+    ]
+  },
+  "operator_keywords": {
+    "長庚醫療財團法人": "cgmh",
+    "臺北醫學大學": "tmu",
+    "台北醫學大學": "tmu",
+    "中國醫藥大學": "cmu",
+    "高雄醫學大學": "kmu",
+    "秀傳醫療": "show",
+    "馬偕醫療財團法人": "mmh",
+    "臺北榮民總醫院": "vghs",
+    "中英醫療社團法人": "ying"
+  },
+  "groups": [
+    {
+      "id": "cgmh",
+      "name": "長庚醫療財團法人",
+      "short": "長庚",
+      "kind": "企業財團",
+      "backer": "台塑企業（王永慶家族）",
+      "founded": "1976",
+      "website": "https://www.cgmh.org.tw/",
+      "note": "台塑集團創辦人王永慶為紀念父親王長庚所創，是國內規模最大的私立醫療體系；並受託經營新北市立土城醫院、高雄市立鳳山醫院。",
+      "patterns": [
+        "長庚醫療財團法人"
+      ]
+    },
+    {
+      "id": "cathay",
+      "name": "國泰醫療財團法人",
+      "short": "國泰",
+      "kind": "企業財團",
+      "backer": "國泰集團（蔡萬霖家族／國泰金控）",
+      "founded": "1977",
+      "website": "https://www.cgh.org.tw/",
+      "note": "國泰人壽捐資設立，院區集中北台灣都會精華區（仁愛路本院、汐止、新竹）。",
+      "patterns": [
+        "國泰醫療財團法人"
+      ]
+    },
+    {
+      "id": "skh",
+      "name": "新光醫療財團法人",
+      "short": "新光",
+      "kind": "企業財團",
+      "backer": "新光集團（吳火獅家族／新光金控）",
+      "founded": "1992",
+      "website": "https://www.skh.org.tw/",
+      "note": "新光集團創辦人吳火獅之子吳東進主導設立，以台北士林單一大型院區運作。",
+      "patterns": [
+        "新光醫療財團法人"
+      ]
+    },
+    {
+      "id": "femh",
+      "name": "醫療財團法人徐元智先生醫藥基金會（亞東）",
+      "short": "亞東",
+      "kind": "企業財團",
+      "backer": "遠東集團（徐有庠家族／徐旭東）",
+      "founded": "1981",
+      "website": "https://www.femh.org.tw/",
+      "note": "遠東集團創辦人徐有庠為紀念其父徐元智所設，板橋單一院區升格醫學中心。",
+      "patterns": [
+        "徐元智先生醫藥基金會",
+        "亞東紀念醫院"
+      ]
+    },
+    {
+      "id": "chimei",
+      "name": "奇美醫療財團法人",
+      "short": "奇美",
+      "kind": "企業財團",
+      "backer": "奇美實業（許文龍家族）",
+      "founded": "1987",
+      "website": "https://www.chimei.org.tw/",
+      "note": "奇美實業創辦人許文龍接手台南逢甲醫院改組而成，形成永康、柳營、佳里三院區的台南醫療網。",
+      "patterns": [
+        "奇美醫療財團法人"
+      ]
+    },
+    {
+      "id": "edah",
+      "name": "義大醫療財團法人",
+      "short": "義大",
+      "kind": "企業財團",
+      "backer": "義联集團（林義守）",
+      "founded": "2004",
+      "website": "https://www.edah.org.tw/",
+      "note": "義联集團跨足鋼鐵、教育、醫療；高雄燕巢院區與義守大學相鄰，形成醫教合一聚落。",
+      "patterns": [
+        "義大醫療財團法人"
+      ]
+    },
+    {
+      "id": "cheng_hsin",
+      "name": "振興醫療財團法人",
+      "short": "振興",
+      "kind": "企業財團",
+      "backer": "辜振甫家族（台泥／和信企業團）",
+      "founded": "1967",
+      "website": "https://www.chgh.org.tw/",
+      "note": "原振興復健醫學中心，蔣宋美齡發起、辜振甫家族長期主導，心臟血管外科為招牌。",
+      "patterns": [
+        "振興醫療財團法人"
+      ]
+    },
+    {
+      "id": "kfsyscc",
+      "name": "醫療財團法人辜公亮基金會（和信）",
+      "short": "和信",
+      "kind": "企業財團",
+      "backer": "辜家（和信企業團／辜公亮基金會）",
+      "founded": "1990",
+      "website": "https://www.kfsyscc.org/",
+      "note": "台灣第一家癌症專科醫院，採全院整合的癌症治療模式。",
+      "patterns": [
+        "辜公亮基金會",
+        "和信治癌"
+      ]
+    },
+    {
+      "id": "teco",
+      "name": "東元醫療社團法人",
+      "short": "東元",
+      "kind": "企業財團",
+      "backer": "東元集團（黃茂雄家族）",
+      "founded": "1998",
+      "website": "https://www.tewh.org.tw/",
+      "note": "東元電機集團投資設立，深耕新竹科學園區周邊。",
+      "patterns": [
+        "東元醫療社團法人",
+        "東元綜合醫院"
+      ]
+    },
+    {
+      "id": "tzuchi",
+      "name": "佛教慈濟醫療財團法人",
+      "short": "慈濟",
+      "kind": "宗教（佛教）",
+      "backer": "慈濟基金會（證嚴法師）",
+      "founded": "1986",
+      "website": "https://www.tzuchi.com.tw/",
+      "note": "以花蓮為起點的宗教型醫療網，刻意布點偏鄉（玉里、關山、大林、斗六），再與都會院區（台北、台中）互補。",
+      "patterns": [
+        "佛教慈濟醫療財團法人"
+      ]
+    },
+    {
+      "id": "mmh",
+      "name": "台灣基督長老教會馬偕醫療財團法人",
+      "short": "馬偕",
+      "kind": "宗教（基督教長老教會）",
+      "backer": "台灣基督長老教會",
+      "founded": "1880",
+      "website": "https://www.mmh.org.tw/",
+      "note": "源自加拿大宣教士馬偕博士，台灣最早的西式醫院之一；台北、淡水、新竹、台東四大院區。",
+      "patterns": [
+        "馬偕醫療財團法人"
+      ]
+    },
+    {
+      "id": "cch",
+      "name": "彰化基督教醫療財團法人",
+      "short": "彰基",
+      "kind": "宗教（基督教長老教會）",
+      "backer": "台灣基督長老教會",
+      "founded": "1896",
+      "website": "https://www.cch.org.tw/",
+      "note": "以彰化為核心向中部擴張（員林、鹿港、二林、南投、雲林），是中部最綿密的教會醫療網。",
+      "patterns": [
+        "彰化基督教醫療財團法人"
+      ]
+    },
+    {
+      "id": "sinlau",
+      "name": "台灣基督長老教會新樓醫療財團法人",
+      "short": "新樓",
+      "kind": "宗教（基督教長老教會）",
+      "backer": "台灣基督長老教會",
+      "founded": "1865",
+      "website": "https://www.sinlau.org.tw/",
+      "note": "馬雅各醫師創立，台灣第一所西式醫院；台南、麻豆兩院區。",
+      "patterns": [
+        "新樓醫療財團法人"
+      ]
+    },
+    {
+      "id": "cdh",
+      "name": "戴德森醫療財團法人（嘉基）",
+      "short": "嘉基",
+      "kind": "宗教（基督教）",
+      "backer": "美國基督教宣教（戴德森醫師）",
+      "founded": "1958",
+      "website": "https://www.cych.org.tw/",
+      "note": "嘉義基督教醫院與雙福基督教醫院同體系，長期承擔嘉義山區與雲嘉離島醫療。",
+      "patterns": [
+        "戴德森醫療財團法人"
+      ]
+    },
+    {
+      "id": "pcht",
+      "name": "埔基醫療財團法人",
+      "short": "埔基",
+      "kind": "宗教（基督教）",
+      "backer": "基督教山地醫療傳統（謝緯醫師等）",
+      "founded": "1955",
+      "website": "https://www.pcht.org.tw/",
+      "note": "南投山區重要後送醫院，921 震災後重建擴充。",
+      "patterns": [
+        "埔基醫療財團法人"
+      ]
+    },
+    {
+      "id": "ptch",
+      "name": "屏基醫療財團法人",
+      "short": "屏基",
+      "kind": "宗教（基督教）",
+      "backer": "台灣基督長老教會／海外差會",
+      "founded": "1953",
+      "website": "https://www.ptch.org.tw/",
+      "note": "屏東地區教學醫院，長期經營原鄉巡迴醫療。",
+      "patterns": [
+        "屏基醫療財團法人"
+      ]
+    },
+    {
+      "id": "hcch",
+      "name": "恆基醫療財團法人",
+      "short": "恆基",
+      "kind": "宗教（基督教）",
+      "backer": "北歐宣教士創立",
+      "founded": "1959",
+      "website": "https://www.hcch.org.tw/",
+      "note": "恆春半島唯一具規模的急重症據點。",
+      "patterns": [
+        "恆基醫療財團法人"
+      ]
+    },
+    {
+      "id": "tth",
+      "name": "東基醫療財團法人",
+      "short": "東基",
+      "kind": "宗教（基督教）",
+      "backer": "挪威宣教士譚維義創立",
+      "founded": "1969",
+      "website": "https://www.tths.org.tw/",
+      "note": "台東基督教醫院，偏鄉醫療與兒童發展早療見長。",
+      "patterns": [
+        "東基醫療財團法人"
+      ]
+    },
+    {
+      "id": "mennonite",
+      "name": "台灣基督教門諾會醫療財團法人",
+      "short": "門諾",
+      "kind": "宗教（基督教門諾會）",
+      "backer": "美國門諾會（薄柔纜醫師）",
+      "founded": "1948",
+      "website": "https://www.mch.org.tw/",
+      "note": "花蓮門諾醫院及壽豐分院，長照與偏鄉照護為核心。",
+      "patterns": [
+        "門諾會醫療財團法人"
+      ]
+    },
+    {
+      "id": "tahsda",
+      "name": "基督復臨安息日會醫療財團法人臺安醫院",
+      "short": "臺安",
+      "kind": "宗教（基督教復臨安息日會）",
+      "backer": "基督復臨安息日會（全球醫療網）",
+      "founded": "1955",
+      "website": "https://www.tahsda.org.tw/",
+      "note": "台北八德路院區，健康促進與生活型態醫學特色。",
+      "patterns": [
+        "基督復臨安息日會醫療財團法人"
+      ]
+    },
+    {
+      "id": "kckh",
+      "name": "信義醫療財團法人（高雄基督教）",
+      "short": "高基",
+      "kind": "宗教（基督教）",
+      "backer": "信義會",
+      "founded": "",
+      "website": "",
+      "note": "高雄基督教醫院。",
+      "patterns": [
+        "信義醫療財團法人"
+      ]
+    },
+    {
+      "id": "cktm",
+      "name": "天主教耕莘醫療財團法人",
+      "short": "耕莘",
+      "kind": "宗教（天主教）",
+      "backer": "天主教耶穌會",
+      "founded": "1968",
+      "website": "https://www.cth.org.tw/",
+      "note": "耶穌會創辦，新店本院與永和分院深耕雙和地區。",
+      "patterns": [
+        "耕莘醫療財團法人"
+      ]
+    },
+    {
+      "id": "stmh",
+      "name": "天主教靈醫會醫療財團法人",
+      "short": "靈醫會",
+      "kind": "宗教（天主教）",
+      "backer": "天主教靈醫會（義大利）",
+      "founded": "1952",
+      "website": "https://www.smh.org.tw/",
+      "note": "羅東聖母醫院為蘭陽平原核心，並在澎湖設惠民醫院、礁溪設杏和醫院。",
+      "patterns": [
+        "靈醫會醫療財團法人"
+      ]
+    },
+    {
+      "id": "stm",
+      "name": "天主教中華聖母修女會醫療財團法人",
+      "short": "聖馬爾定",
+      "kind": "宗教（天主教）",
+      "backer": "天主教中華聖母修女會",
+      "founded": "1966",
+      "website": "https://www.stm.org.tw/",
+      "note": "嘉義市主要區域醫院。",
+      "patterns": [
+        "中華聖母修女會醫療財團法人"
+      ]
+    },
+    {
+      "id": "sjmh",
+      "name": "天主教若瑟醫療財團法人",
+      "short": "若瑟",
+      "kind": "宗教（天主教）",
+      "backer": "天主教修會",
+      "founded": "1955",
+      "website": "https://www.stjoho.org.tw/",
+      "note": "雲林虎尾地區醫院。",
+      "patterns": [
+        "若瑟醫療財團法人"
+      ]
+    },
+    {
+      "id": "stpaul",
+      "name": "沙爾德聖保祿修女會醫療財團法人",
+      "short": "聖保祿",
+      "kind": "宗教（天主教）",
+      "backer": "沙爾德聖保祿修女會（法國）",
+      "founded": "1962",
+      "website": "https://www.stpauls.org.tw/",
+      "note": "桃園市區教會醫院。",
+      "patterns": [
+        "聖保祿修女會醫療財團法人"
+      ]
+    },
+    {
+      "id": "hualien_diocese",
+      "name": "天主教花蓮教區醫療財團法人",
+      "short": "台東聖母",
+      "kind": "宗教（天主教）",
+      "backer": "天主教花蓮教區",
+      "founded": "1961",
+      "website": "",
+      "note": "台東聖母醫院，長照與居家醫療著稱。",
+      "patterns": [
+        "花蓮教區醫療財團法人"
+      ]
+    },
+    {
+      "id": "jenci",
+      "name": "天主教仁慈醫療財團法人",
+      "short": "仁慈",
+      "kind": "宗教（天主教）",
+      "backer": "天主教會",
+      "founded": "",
+      "website": "",
+      "note": "苗栗苑裡仁慈醫院。",
+      "patterns": [
+        "天主教仁慈醫療財團法人"
+      ]
+    },
+    {
+      "id": "sksh",
+      "name": "天主教聖功醫療財團法人",
+      "short": "聖功",
+      "kind": "宗教（天主教）",
+      "backer": "聖功修女會",
+      "founded": "",
+      "website": "",
+      "note": "高雄聖功醫院。",
+      "patterns": [
+        "聖功醫療財團法人"
+      ]
+    },
+    {
+      "id": "dominican",
+      "name": "天主教中華道明修女會醫療財團法人",
+      "short": "福安",
+      "kind": "宗教（天主教）",
+      "backer": "中華道明修女會",
+      "founded": "",
+      "website": "",
+      "note": "天主教福安醫院。",
+      "patterns": [
+        "中華道明修女會醫療財團法人"
+      ]
+    },
+    {
+      "id": "entw",
+      "name": "行天宮醫療志業醫療財團法人（恩主公）",
+      "short": "恩主公",
+      "kind": "宗教（道教／民間信仰）",
+      "backer": "財團法人台北行天宮",
+      "founded": "1997",
+      "website": "https://www.eck.org.tw/",
+      "note": "行天宮出資興建，三峽、樹林地區的核心醫院。",
+      "patterns": [
+        "行天宮醫療志業"
+      ]
+    },
+    {
+      "id": "zhengde",
+      "name": "醫療財團法人正德癌症醫療基金會",
+      "short": "正德",
+      "kind": "宗教（佛教）",
+      "backer": "佛教正德基金會",
+      "founded": "",
+      "website": "",
+      "note": "佛教正德醫院，以癌症照護與弱勢義診為訴求。",
+      "patterns": [
+        "正德癌症醫療基金會"
+      ]
+    },
+    {
+      "id": "kaiyuan",
+      "name": "開元寺慈愛醫院",
+      "short": "開元寺",
+      "kind": "宗教（佛教）",
+      "backer": "台南開元寺",
+      "founded": "",
+      "website": "",
+      "note": "寺廟創辦的地區醫院。",
+      "patterns": [
+        "開元寺慈愛醫院"
+      ]
+    },
+    {
+      "id": "cmu",
+      "name": "中國醫藥大學暨醫療體系",
+      "short": "中國醫",
+      "kind": "大學醫療體系",
+      "backer": "中國醫藥大學（蔡長海家族主導）",
+      "founded": "1980",
+      "website": "https://www.cmuh.cmu.edu.tw/",
+      "note": "由中國醫藥大學與亞洲大學構成的中部最大私立醫療集團，中西醫結合為特色；並受託經營台南市立安南醫院、台中市立老人復健綜合醫院。",
+      "patterns": [
+        "中國醫藥大學",
+        "亞洲大學附屬"
+      ]
+    },
+    {
+      "id": "csmu",
+      "name": "中山醫學大學醫療體系",
+      "short": "中山醫",
+      "kind": "大學醫療體系",
+      "backer": "中山醫學大學（周汝川家族創校）",
+      "founded": "1966",
+      "website": "https://web.csh.org.tw/",
+      "note": "台中南區醫學中心級教學醫院，牙醫起家。",
+      "patterns": [
+        "中山醫學大學"
+      ]
+    },
+    {
+      "id": "tmu",
+      "name": "臺北醫學大學醫療體系",
+      "short": "北醫",
+      "kind": "大學醫療體系",
+      "backer": "臺北醫學大學",
+      "founded": "1976",
+      "website": "https://www.tmuh.org.tw/",
+      "note": "一校多院：北醫附醫自營，萬芳（台北市委託）、雙和（衛福部委託）為公私協力經營的代表案例。",
+      "patterns": [
+        "臺北醫學大學附設醫院"
+      ]
+    },
+    {
+      "id": "kmu",
+      "name": "高雄醫學大學醫療體系",
+      "short": "高醫",
+      "kind": "大學醫療體系",
+      "backer": "財團法人私立高雄醫學大學（杜聰明創校、陳啟川家族捐地）",
+      "founded": "1957",
+      "website": "https://www.kmuh.org.tw/",
+      "note": "南台灣第一所醫學院；除中和紀念醫院外，受託經營高雄市立小港、大同、旗津醫院與高醫岡山醫院，公私協力布點密集。",
+      "patterns": [
+        "高雄醫學大學"
+      ]
+    },
+    {
+      "id": "ntuh",
+      "name": "國立臺灣大學醫學院附設醫院",
+      "short": "台大",
+      "kind": "國立大學（教育部）",
+      "backer": "國立臺灣大學／教育部",
+      "founded": "1895",
+      "website": "https://www.ntuh.gov.tw/",
+      "note": "台灣醫學龍頭，分院網涵蓋北護、金山、雲林、新竹（生醫、新竹）與癌醫中心分院。",
+      "patterns": [
+        "國立臺灣大學醫學院附設"
+      ]
+    },
+    {
+      "id": "ncku",
+      "name": "國立成功大學醫學院附設醫院",
+      "short": "成大",
+      "kind": "國立大學（教育部）",
+      "backer": "國立成功大學／教育部",
+      "founded": "1988",
+      "website": "https://web.hosp.ncku.edu.tw/",
+      "note": "南台灣重症與臨床研究重鎮，另設斗六分院。",
+      "patterns": [
+        "國立成功大學醫學院附設"
+      ]
+    },
+    {
+      "id": "nycu",
+      "name": "國立陽明交通大學附設醫院",
+      "short": "陽交大",
+      "kind": "國立大學（教育部）",
+      "backer": "國立陽明交通大學／教育部",
+      "founded": "2000",
+      "website": "https://www.ymuh.ym.edu.tw/",
+      "note": "由原署立宜蘭醫院改隸而成的大學附設醫院。",
+      "patterns": [
+        "國立陽明交通大學附設"
+      ]
+    },
+    {
+      "id": "fju",
+      "name": "天主教輔仁大學附設醫院",
+      "short": "輔大",
+      "kind": "大學醫療體系（天主教）",
+      "backer": "天主教輔仁大學",
+      "founded": "2017",
+      "website": "https://www.fjuh.fju.edu.tw/",
+      "note": "新莊副都心新設教學醫院，補上新北西區的醫療缺口。",
+      "patterns": [
+        "輔仁大學附設醫院"
+      ]
+    },
+    {
+      "id": "fy",
+      "name": "輔英科技大學附設醫院",
+      "short": "輔英",
+      "kind": "大學醫療體系",
+      "backer": "輔英科技大學",
+      "founded": "",
+      "website": "",
+      "note": "高雄大寮地區醫院。",
+      "patterns": [
+        "輔英科技大學附設"
+      ]
+    },
+    {
+      "id": "vghs",
+      "name": "退輔會榮民醫療體系",
+      "short": "榮總",
+      "kind": "公立（中央：退輔會）",
+      "backer": "國軍退除役官兵輔導委員會",
+      "founded": "1958",
+      "website": "https://www.vghtpe.gov.tw/",
+      "note": "台北／台中／高雄／屏東四大榮總，加上遍布東部與離島的分院，是覆蓋面積最廣的公立醫療網。",
+      "patterns": [
+        "榮民總醫院"
+      ]
+    },
+    {
+      "id": "mnd",
+      "name": "國軍醫療體系（國防部軍醫局）",
+      "short": "國軍",
+      "kind": "公立（中央：國防部）",
+      "backer": "國防部軍醫局",
+      "founded": "",
+      "website": "https://www.tsgh.ndmctsgh.edu.tw/",
+      "note": "三軍總醫院為核心，各地國軍總醫院以「附設民眾診療服務處」對外開放。",
+      "patterns": [
+        "三軍總醫院",
+        "國軍.{0,4}總醫院"
+      ]
+    },
+    {
+      "id": "mohw",
+      "name": "衛生福利部所屬醫院",
+      "short": "部立",
+      "kind": "公立（中央：衛福部）",
+      "backer": "衛生福利部",
+      "founded": "",
+      "website": "https://www.mohw.gov.tw/",
+      "note": "部立醫院承擔醫療平權任務，並包辦精神與慢性專科（療養院、胸腔病院），多設於醫療資源不足地區。",
+      "patterns": [
+        "衛生福利部"
+      ]
+    },
+    {
+      "id": "moj",
+      "name": "法務部矯正署附設醫院",
+      "short": "矯正署",
+      "kind": "公立（中央：法務部）",
+      "backer": "法務部矯正署",
+      "founded": "",
+      "website": "",
+      "note": "監獄收容人醫療照護。",
+      "patterns": [
+        "法務部矯正署"
+      ]
+    },
+    {
+      "id": "tpe_city",
+      "name": "臺北市立醫療體系",
+      "short": "北市立",
+      "kind": "公立（地方政府）",
+      "backer": "臺北市政府衛生局",
+      "founded": "",
+      "website": "https://tpech.gov.taipei/",
+      "note": "臺北市立聯合醫院整併七院區自營；萬芳、關渡分別委託北醫與北榮經營。",
+      "patterns": [
+        "臺北市立"
+      ]
+    },
+    {
+      "id": "ntpc_city",
+      "name": "新北市立醫療體系",
+      "short": "新北市立",
+      "kind": "公立（地方政府）",
+      "backer": "新北市政府衛生局",
+      "founded": "",
+      "website": "",
+      "note": "新北市立聯合醫院自營；土城醫院委託長庚興建經營。",
+      "patterns": [
+        "新北市立"
+      ]
+    },
+    {
+      "id": "tc_city",
+      "name": "臺中市立醫療體系",
+      "short": "中市立",
+      "kind": "公立（地方政府）",
+      "backer": "臺中市政府衛生局",
+      "founded": "",
+      "website": "",
+      "note": "老人復健綜合醫院委託中國醫藥大學興建經營。",
+      "patterns": [
+        "臺中市立"
+      ]
+    },
+    {
+      "id": "tn_city",
+      "name": "臺南市立醫療體系",
+      "short": "南市立",
+      "kind": "公立（地方政府）",
+      "backer": "臺南市政府衛生局",
+      "founded": "",
+      "website": "",
+      "note": "台南市立醫院委託秀傳、安南醫院委託中國醫，皆為委外經營。",
+      "patterns": [
+        "臺南市立",
+        "台南市立"
+      ]
+    },
+    {
+      "id": "kh_city",
+      "name": "高雄市立醫療體系",
+      "short": "高市立",
+      "kind": "公立（地方政府）",
+      "backer": "高雄市政府衛生局",
+      "founded": "",
+      "website": "",
+      "note": "民生、聯合、凱旋自營；小港、大同、旗津委託高醫，岡山委託秀傳，鳳山委託長庚——全台公辦民營密度最高的城市。",
+      "patterns": [
+        "高雄市立"
+      ]
+    },
+    {
+      "id": "kl_city",
+      "name": "基隆市立醫院",
+      "short": "基市立",
+      "kind": "公立（地方政府）",
+      "backer": "基隆市政府",
+      "founded": "",
+      "website": "",
+      "note": "",
+      "patterns": [
+        "基隆市立"
+      ]
+    },
+    {
+      "id": "lienchiang",
+      "name": "連江縣立醫院",
+      "short": "連江縣立",
+      "kind": "公立（地方政府）",
+      "backer": "連江縣政府",
+      "founded": "",
+      "website": "",
+      "note": "馬祖唯一的縣立醫院，離島醫療最前線。",
+      "patterns": [
+        "連江縣立"
+      ]
+    },
+    {
+      "id": "show",
+      "name": "秀傳醫療體系",
+      "short": "秀傳",
+      "kind": "私人醫療法人",
+      "backer": "黃明和家族",
+      "founded": "1974",
+      "website": "https://www.scmh.org.tw/",
+      "note": "彰化起家，彰濱院區設有亞洲微創手術訓練中心（IRCAD Taiwan）；受託經營台南市立醫院、高雄市立岡山醫院。",
+      "patterns": [
+        "秀傳醫療"
+      ]
+    },
+    {
+      "id": "msp",
+      "name": "敏盛醫療體系（盛弘醫藥）",
+      "short": "敏盛",
+      "kind": "私人醫療法人",
+      "backer": "楊敏盛家族／盛弘醫藥（上市公司）",
+      "founded": "1976",
+      "website": "https://www.e-ms.com.tw/",
+      "note": "桃園在地體系，以上市公司盛弘醫藥為集團資本核心，是醫療產業化的代表案例。",
+      "patterns": [
+        "敏盛"
+      ]
+    },
+    {
+      "id": "landseed",
+      "name": "聯新國際醫療集團",
+      "short": "聯新",
+      "kind": "私人醫療法人",
+      "backer": "張煥禎家族",
+      "founded": "1990",
+      "website": "https://www.landseedhospital.com.tw/",
+      "note": "原壢新醫院，以運動醫學與兩岸醫療投資（上海禾新）為特色。",
+      "patterns": [
+        "聯新國際"
+      ]
+    },
+    {
+      "id": "sltung",
+      "name": "童綜合醫療社團法人",
+      "short": "童綜合",
+      "kind": "私人醫療法人",
+      "backer": "童瑞欽家族",
+      "founded": "1971",
+      "website": "https://www.sltung.com.tw/",
+      "note": "台中海線最大醫院，重症急救與海空後送見長。",
+      "patterns": [
+        "童綜合醫療"
+      ]
+    },
+    {
+      "id": "ktgh",
+      "name": "光田醫療社團法人",
+      "short": "光田",
+      "kind": "私人醫療法人",
+      "backer": "王家（王乃弘家族）",
+      "founded": "1963",
+      "website": "https://www.ktgh.com.tw/",
+      "note": "沙鹿、大甲雙院區，與童綜合共同支撐台中海線。",
+      "patterns": [
+        "光田醫療",
+        "光田醫院"
+      ]
+    },
+    {
+      "id": "ccgh",
+      "name": "澄清醫療體系",
+      "short": "澄清",
+      "kind": "私人醫療法人",
+      "backer": "澄清綜合醫院（中港、平等兩系同源）",
+      "founded": "1935",
+      "website": "https://www.ccgh.com.tw/",
+      "note": "台中老牌私院；中港院區與平等街本院同源同名但分屬不同法人主體。",
+      "patterns": [
+        "澄清綜合醫院"
+      ]
+    },
+    {
+      "id": "wgh",
+      "name": "為恭醫療財團法人",
+      "short": "為恭",
+      "kind": "私人醫療法人",
+      "backer": "為恭紀念醫院",
+      "founded": "",
+      "website": "https://www.weigong.org.tw/",
+      "note": "苗栗頭份地區主要醫院，精神醫療服務量大。",
+      "patterns": [
+        "為恭醫療財團法人"
+      ]
+    },
+    {
+      "id": "tcmg",
+      "name": "天成醫療社團法人（天晟）",
+      "short": "天晟",
+      "kind": "私人醫療法人",
+      "backer": "天成醫療體系",
+      "founded": "",
+      "website": "https://www.tcmg.com.tw/",
+      "note": "中壢地區區域醫院。",
+      "patterns": [
+        "天成醫療社團法人"
+      ]
+    },
+    {
+      "id": "lee",
+      "name": "李綜合醫療社團法人",
+      "short": "李綜合",
+      "kind": "私人醫療法人",
+      "backer": "李家（李綜合醫院）",
+      "founded": "",
+      "website": "",
+      "note": "大甲、苑裡雙院區。",
+      "patterns": [
+        "李綜合醫療"
+      ]
+    },
+    {
+      "id": "linshin",
+      "name": "林新醫療社團法人",
+      "short": "林新",
+      "kind": "私人醫療法人",
+      "backer": "林家（林新醫院）",
+      "founded": "",
+      "website": "https://www.lshosp.com.tw/",
+      "note": "台中南屯與烏日兩院區。",
+      "patterns": [
+        "林新醫療"
+      ]
+    },
+    {
+      "id": "jenai",
+      "name": "仁愛醫療財團法人",
+      "short": "仁愛",
+      "kind": "私人醫療法人",
+      "backer": "仁愛醫療財團法人",
+      "founded": "",
+      "website": "https://www.jah.org.tw/",
+      "note": "大里仁愛與台中仁愛兩院區。",
+      "patterns": [
+        "仁愛醫療財團法人"
+      ]
+    },
+    {
+      "id": "jkh",
+      "name": "阮綜合醫療社團法人",
+      "short": "阮綜合",
+      "kind": "私人醫療法人",
+      "backer": "阮家（阮綜合醫院）",
+      "founded": "",
+      "website": "https://www.jkh.org.tw/",
+      "note": "高雄苓雅老牌私院。",
+      "patterns": [
+        "阮綜合醫療"
+      ]
+    },
+    {
+      "id": "pcgh",
+      "name": "寶建醫療社團法人",
+      "short": "寶建",
+      "kind": "私人醫療法人",
+      "backer": "寶建醫院",
+      "founded": "",
+      "website": "",
+      "note": "屏東地區區域醫院。",
+      "patterns": [
+        "寶建醫療"
+      ]
+    },
+    {
+      "id": "pohai",
+      "name": "醫療財團法人羅許基金會（羅東博愛）",
+      "short": "羅東博愛",
+      "kind": "私人醫療法人",
+      "backer": "羅許基金會（許國文家族）",
+      "founded": "1974",
+      "website": "https://www.pohai.org.tw/",
+      "note": "宜蘭最大民營醫院，與羅東聖母醫院分庭抗禮。",
+      "patterns": [
+        "羅許基金會"
+      ]
+    },
+    {
+      "id": "antai",
+      "name": "安泰醫療社團法人",
+      "short": "安泰",
+      "kind": "私人醫療法人",
+      "backer": "安泰醫院體系",
+      "founded": "",
+      "website": "",
+      "note": "屏東東港、潮州院區。",
+      "patterns": [
+        "安泰醫療社團法人"
+      ]
+    },
+    {
+      "id": "ying",
+      "name": "中英醫療社團法人",
+      "short": "中英",
+      "kind": "私人醫療法人",
+      "backer": "中英醫院體系",
+      "founded": "",
+      "website": "",
+      "note": "板橋一帶，並受託經營郵政醫院。",
+      "patterns": [
+        "中英醫療社團法人"
+      ]
+    },
+    {
+      "id": "yuanjung",
+      "name": "員榮醫療社團法人",
+      "short": "員榮",
+      "kind": "私人醫療法人",
+      "backer": "員榮醫療體系（張克士）",
+      "founded": "",
+      "website": "https://www.yuanrung.org.tw/",
+      "note": "彰化員林地區。",
+      "patterns": [
+        "員榮醫療"
+      ]
+    },
+    {
+      "id": "renji",
+      "name": "臺灣省私立臺北仁濟院",
+      "short": "仁濟院",
+      "kind": "社會慈善財團法人",
+      "backer": "臺北仁濟院（清代同善堂沿革）",
+      "founded": "1866",
+      "website": "https://www.tjci.org.tw/",
+      "note": "台灣現存最悠久的社福慈善組織之一，兼營仁濟醫院與新莊分院。",
+      "patterns": [
+        "仁濟院附設"
+      ]
+    },
+    {
+      "id": "miner",
+      "name": "醫療財團法人臺灣區煤礦業基金會（臺灣礦工醫院）",
+      "short": "礦工",
+      "kind": "產業公益財團法人",
+      "backer": "臺灣區煤礦業基金會",
+      "founded": "1958",
+      "website": "",
+      "note": "因應礦業職災而生，見證台灣礦業史。",
+      "patterns": [
+        "煤礦業基金會"
+      ]
+    },
+    {
+      "id": "renaijia",
+      "name": "仁愛之家／仁濟系社福附設醫院",
+      "short": "仁愛之家",
+      "kind": "社會慈善財團法人",
+      "backer": "各地仁愛之家（省屬社福機構）",
+      "founded": "",
+      "website": "",
+      "note": "附設醫院多以精神科與慢性照護為主（靜和、仁馨、慈惠、新生）。",
+      "patterns": [
+        "仁愛之家附設"
+      ]
+    },
+    {
+      "id": "canning",
+      "name": "康寧醫療財團法人",
+      "short": "康寧",
+      "kind": "私人醫療法人",
+      "backer": "康寧醫院",
+      "founded": "",
+      "website": "",
+      "note": "台北內湖地區醫院。",
+      "patterns": [
+        "康寧醫療財團法人"
+      ]
+    },
+    {
+      "id": "hungen",
+      "name": "宏恩醫療財團法人",
+      "short": "宏恩",
+      "kind": "私人醫療法人",
+      "backer": "宏恩綜合醫院",
+      "founded": "",
+      "website": "",
+      "note": "台北大安區老牌私院。",
+      "patterns": [
+        "宏恩醫療財團法人"
+      ]
+    },
+    {
+      "id": "farmers",
+      "name": "農會附設醫院",
+      "short": "農會",
+      "kind": "農會／合作事業",
+      "backer": "地方農會",
+      "founded": "",
+      "website": "",
+      "note": "台中東勢區農會附設農民醫院，全國少見由農會經營的醫院。",
+      "patterns": [
+        "農會附設"
+      ]
+    },
+    {
+      "id": "post",
+      "name": "中華郵政附設醫院",
+      "short": "郵政",
+      "kind": "公營事業",
+      "backer": "中華郵政公司",
+      "founded": "1966",
+      "website": "",
+      "note": "中華郵政員工福利醫院，現委託中英醫療社團法人經營。",
+      "patterns": [
+        "郵政醫院"
+      ]
+    },
+    {
+      "id": "local_gov_other",
+      "name": "其他縣市立醫院",
+      "short": "縣市立",
+      "kind": "公立（地方政府）",
+      "backer": "各縣市政府",
+      "founded": "",
+      "website": "",
+      "note": "由地方政府設立的公立醫院（新竹市立馬偕兒童醫院等）。",
+      "patterns": [
+        "^.{2,3}[市縣]立"
+      ]
+    }
+  ]
+}

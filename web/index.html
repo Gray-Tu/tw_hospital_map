@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>台灣醫院經營版圖</title>
+<link rel="stylesheet" href="vendor/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <div class="brand">
+      <h1>台灣醫院經營版圖</h1>
+      <p id="subtitle">載入中…</p>
+    </div>
+    <div class="topbar-actions">
+      <label class="toggle"><input type="checkbox" id="showLinks"> 顯示布點連線</label>
+      <button id="btnAnalysis" class="ghost">體系排行</button>
+      <button id="btnReset" class="ghost">重設篩選</button>
+    </div>
+  </header>
+
+  <aside id="sidebar">
+    <div class="field">
+      <input type="search" id="q" placeholder="搜尋醫院、地址、科別…" autocomplete="off">
+    </div>
+
+    <section class="filter-block">
+      <h2>經營型態</h2>
+      <div id="familyChips" class="chips"></div>
+    </section>
+
+    <section class="filter-block">
+      <h2>醫院層級</h2>
+      <div id="levelChips" class="chips"></div>
+    </section>
+
+    <section class="filter-block">
+      <h2>醫療特色</h2>
+      <div id="tagChips" class="chips small"></div>
+    </section>
+
+    <section class="filter-block grow">
+      <h2>經營體系 <span id="groupCount" class="muted"></span></h2>
+      <div id="groupList" class="group-list"></div>
+    </section>
+  </aside>
+
+  <main id="mapWrap">
+    <div id="map"></div>
+    <div id="legend" class="legend"></div>
+    <div id="counter" class="counter"></div>
+  </main>
+
+  <aside id="detail" class="detail closed">
+    <button id="detailClose" class="close" aria-label="關閉">×</button>
+    <div id="detailBody"></div>
+  </aside>
+</div>
+
+<script src="vendor/leaflet.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
