@@ -99,9 +99,8 @@ button.ghost:hover { border-color: var(--accent); color: var(--accent); }
 
 /* ── 地圖 ───────────────────────────── */
 #mapWrap { grid-area: map; position: relative; }
-#map { position: absolute; inset: 0; background: #dfe4ea; }
-/* 圖磚降飽和，讓資料點成為視覺主體 */
-#map .leaflet-tile-pane { filter: saturate(.35) brightness(1.06) contrast(.94); }
+/* 底圖只有縣市界，海面用淡色鋪底，讓醫院點成為唯一的視覺主體 */
+#map { position: absolute; inset: 0; background: #f7f9fb; }
 .legend, .counter {
   position: absolute; z-index: 800; background: rgba(255,255,255,.94);
   border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow);
@@ -116,6 +115,7 @@ body.drawer-open .counter { right: 392px; }
 .counter { right: 12px; top: 12px; font-weight: 600; transition: right .22s ease; }
 .counter span { color: var(--ink-soft); font-weight: 400; }
 
+.leaflet-control-attribution { font-size: 10px; background: rgba(255,255,255,.8); }
 .leaflet-popup-content { margin: 10px 12px; font-size: 12.5px; line-height: 1.5; }
 .leaflet-popup-content b { font-size: 13px; }
 

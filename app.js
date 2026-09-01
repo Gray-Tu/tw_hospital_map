@@ -19,6 +19,11 @@ const S = {           // 篩選狀態
   group: null, showLinks: false,
 };
 let DATA, map, markerLayer, linkLayer, highlight, markers = new Map();
+let countyLayer, countyShapes = new Map();
+
+// 台灣本島視野（外島仍可平移過去，但預設不佔版面）
+const MAIN_ISLAND = [[21.85, 119.95], [25.35, 122.05]];
+const TW_BOUNDS = [[20.5, 117.5], [26.6, 123.0]];
 
 const $ = (sel) => document.querySelector(sel);
 const el = (tag, cls, html) => {
@@ -43,11 +48,19 @@ function init() {
   $("#subtitle").textContent =
     `全台 ${m.hospital_count} 家健保特約醫院 · ${Object.keys(DATA.group_stats).length} 個經營體系 · 資料更新 ${m.generated}`;
 
-  map = L.map("map", { zoomControl: true, preferCanvas: true }).setView([23.7, 120.95], 8);
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: '&copy; OpenStreetMap contributors ｜ 醫院資料：衛福部中央健康保險署',
-    maxZoom: 19,
-  }).addTo(map);
+  map = L.map("map", {
+    zoomControl: true, preferCanvas: true,
+    minZoom: 7, maxZoom: 12,   // 底圖只有縣市界，再放大也沒有更多資訊
+    maxBounds: TW_BOUNDS, maxBoundsViscosity: .7,
+    attributionControl: true,
+  }).fitBounds(MAIN_ISLAND);
+  map.attributionControl.addAttribution(
+    "縣市界：內政部（g0v/twgeojson）｜醫院資料：衛福部中央健康保險署");
+  // 縣市底圖放進獨立 pane，zIndex 低於 overlayPane(400)，
+  // 否則它會畫在同一張 canvas 上把醫院點蓋掉。
+  map.createPane("counties");
+  map.getPane("counties").style.zIndex = 350;
+  countyLayer = L.layerGroup().addTo(map);
   linkLayer = L.layerGroup().addTo(map);
   markerLayer = L.layerGroup().addTo(map);
 
@@ -55,6 +68,7 @@ function init() {
   // CSS grid 版面在 Leaflet 初始化時尚未定案，容器尺寸會被讀成 0，
   // 造成之後 fitBounds 算出錯誤縮放；改用 ResizeObserver 持續校正。
   new ResizeObserver(() => map.invalidateSize()).observe($("#mapWrap"));
+  loadCounties();
   buildMarkers();
   buildChips();
   buildCountySelect();
@@ -62,6 +76,51 @@ function init() {
   buildLegend();
   bindUI();
   apply();
+}
+
+/* ── 底圖：只畫台灣縣市界，不用外部圖磚 ─────────────── */
+function loadCounties() {
+  fetch("data/tw_counties.geojson")
+    .then((r) => r.json())
+    .then((geo) => {
+      L.geoJSON(geo, {
+        pane: "counties",
+        renderer: L.canvas({ pane: "counties" }),
+        style: countyStyle,
+        onEachFeature: (ft, lyr) => {
+          const name = ft.properties.name;
+          countyShapes.set(name, lyr);
+          const n = DATA.county_counts[name] || 0;
+          const c = DATA.county_center_counts[name] || 0;
+          lyr.bindTooltip(
+            `${name}<br><small>${n} 家醫院${c ? "・醫學中心 " + c : ""}</small>`,
+            { sticky: true });
+          lyr.on("click", () => {
+            S.county = S.county === name ? "" : name;
+            $("#county").value = S.county;
+            apply();
+            zoomToCounty();
+          });
+        },
+      }).addTo(countyLayer);
+      paintCounties();
+    })
+    .catch(() => { /* 底圖載不到不影響資料點 */ });
+}
+
+function countyStyle(ft) {
+  const on = S.county && ft.properties.name === S.county;
+  return {
+    color: on ? "#7d8a9e" : "#b6c1d1",
+    weight: on ? 1.8 : 1,
+    fillColor: on ? "#dfe7f4" : "#eef1f5",
+    fillOpacity: 1,
+  };
+}
+
+function paintCounties() {
+  countyShapes.forEach((lyr, name) =>
+    lyr.setStyle(countyStyle({ properties: { name } })));
 }
 
 /* ── 圖層 ─────────────────────────────────────────── */
@@ -127,11 +186,12 @@ function buildCountySelect() {
 }
 
 function zoomToCounty() {
+  map.stop();
   const pts = DATA.hospitals.filter((h) => h.lat != null && (!S.county || h.ct === S.county))
     .map((h) => [h.lat, h.lon]);
   if (!pts.length) return;
   map.fitBounds(L.latLngBounds(pts).pad(.15), {
-    maxZoom: 12, paddingTopLeft: [20, 20],
+    maxZoom: 11, paddingTopLeft: [20, 20],
     paddingBottomRight: [drawerWidth() + 20, 20],
   });
 }
@@ -176,7 +236,8 @@ function bindUI() {
     $("#q").value = ""; $("#county").value = "";
     document.querySelectorAll(".chip.on").forEach((c) => c.classList.remove("on"));
     selectGroup(null);
-    map.setView([23.7, 120.95], 8);
+    map.stop();
+    map.fitBounds(MAIN_ISLAND);
   };
   $("#btnAnalysis").onclick = showAnalysis;
   document.addEventListener("keydown", (e) => {
@@ -213,6 +274,7 @@ function apply() {
     if (!mk) { noGeo++; return; }
     markerLayer.addLayer(mk);
   });
+  paintCounties();
   $("#counter").innerHTML =
     `${shown} 家醫院 <span>／ 全台 ${DATA.meta.hospital_count} 家` +
     (noGeo ? `・${noGeo} 家未定位` : "") + `</span>`;
@@ -255,11 +317,12 @@ function selectGroup(gid) {
     n.classList.toggle("on", n.dataset.gid === gid));
   apply();
   if (gid) {
+    map.stop();
     const pts = DATA.hospitals.filter((h) => (h.pg || h.og) === gid && h.lat != null)
       .map((h) => [h.lat, h.lon]);
     // 右側詳情抽屜會蓋住地圖，縮放時預留空間
     if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(.15), {
-      maxZoom: 12, paddingTopLeft: [20, 20],
+      maxZoom: 11, paddingTopLeft: [20, 20],
       paddingBottomRight: [drawerWidth() + 20, 20],
     });
     showGroup(gid);
@@ -344,7 +407,7 @@ function showHospital(h) {
   bindDetailLinks();
   const mk = markers.get(h.id);
   if (mk) {
-    map.setView(mk.getLatLng(), Math.max(map.getZoom(), 13));
+    map.setView(mk.getLatLng(), Math.max(map.getZoom(), 10));
     if (highlight) map.removeLayer(highlight);
     highlight = L.circleMarker(mk.getLatLng(), {
       radius: 15, color: FAMILY_COLOR[h.fam] || "#98a2b3", weight: 2,
