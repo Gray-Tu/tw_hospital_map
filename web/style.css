@@ -130,6 +130,10 @@ body.drawer-open .legend-show { right: 392px; }
 .counter { right: 12px; top: 12px; font-weight: 600; transition: right .22s ease; }
 .counter span { color: var(--ink-soft); font-weight: 400; }
 
+.inset-label {
+  font-size: 11px; color: #8590a2; letter-spacing: 1px; white-space: nowrap;
+  transform: translate(-50%, -100%); text-shadow: 0 0 3px #f7f9fb, 0 0 3px #f7f9fb;
+}
 .leaflet-control-attribution { font-size: 10px; background: rgba(255,255,255,.8); }
 .leaflet-popup-content { margin: 10px 12px; font-size: 12.5px; line-height: 1.5; }
 .leaflet-popup-content b { font-size: 13px; }

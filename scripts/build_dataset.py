@@ -149,6 +149,10 @@ def main():
                 depts = [d.strip() for d in normalize_text(r["診療科別"]).split(",") if d.strip()]
                 services = [s.strip() for s in normalize_text(r["服務項目"]).split(",") if s.strip()]
                 kind = normalize_text(r["醫事機構種類"])
+                # 健保署「備註」欄有 281 筆是佔位符「-」，視為空值
+                note = normalize_text(r["備註"])
+                if note in ("-", "無", "N/A"):
+                    note = ""
                 owner, operator, delegated_to = classify(name, groups)
                 ov = overrides.get(normalize_text(r["醫事機構代碼"]), {})
                 owner = ov.get("owner_group", owner)
@@ -171,7 +175,7 @@ def main():
                     "delegated_to": delegated_to,
                     "independent_kind": None if owner else fallback_kind(name),
                     "contract_start": normalize_text(r["合約起日"]),
-                    "note": normalize_text(r["備註"]),
+                    "note": note,
                     "nhi_region": normalize_text(r["分區業務組"]),
                     "map_url": "https://www.google.com/maps/search/?api=1&query="
                                + quote_plus(f"{name} {addr}"),
