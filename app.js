@@ -1,0 +1,410 @@
+/* 台灣醫院經營版圖 — 前端邏輯 */
+(() => {
+"use strict";
+
+const FAMILY_COLOR = {
+  "企業財團": "#e0563f",
+  "宗教團體": "#e6a417",
+  "大學醫療體系": "#2f6fd0",
+  "公立醫療": "#16a085",
+  "私人醫療法人": "#8e5bd0",
+  "其他公益法人": "#6b7f99",
+  "獨立醫院": "#98a2b3",
+};
+const LEVELS = ["醫學中心", "區域醫院", "地區醫院"];
+const LEVEL_RADIUS = { "醫學中心": 9, "區域醫院": 6.5, "地區醫院": 4.5 };
+
+const S = {           // 篩選狀態
+  q: "", families: new Set(), levels: new Set(), tags: new Set(),
+  group: null, showLinks: false,
+};
+let DATA, map, markerLayer, linkLayer, markers = new Map();
+
+const $ = (sel) => document.querySelector(sel);
+const el = (tag, cls, html) => {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (html != null) n.innerHTML = html;
+  return n;
+};
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+/* ── 啟動 ─────────────────────────────────────────── */
+fetch("data/app_data.json")
+  .then((r) => r.json())
+  .then((d) => { DATA = d; init(); })
+  .catch((e) => { $("#subtitle").textContent = "資料載入失敗：" + e.message; });
+
+function init() {
+  const m = DATA.meta;
+  $("#subtitle").textContent =
+    `全台 ${m.hospital_count} 家健保特約醫院 · ${Object.keys(DATA.group_stats).length} 個經營體系 · 資料更新 ${m.generated}`;
+
+  map = L.map("map", { zoomControl: true, preferCanvas: true }).setView([23.7, 120.95], 8);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: '&copy; OpenStreetMap contributors ｜ 醫院資料：衛福部中央健康保險署',
+    maxZoom: 19,
+  }).addTo(map);
+  linkLayer = L.layerGroup().addTo(map);
+  markerLayer = L.layerGroup().addTo(map);
+
+  window.__map = map;   // 供除錯查詢
+  // CSS grid 版面在 Leaflet 初始化時尚未定案，容器尺寸會被讀成 0，
+  // 造成之後 fitBounds 算出錯誤縮放；改用 ResizeObserver 持續校正。
+  new ResizeObserver(() => map.invalidateSize()).observe($("#mapWrap"));
+  buildMarkers();
+  buildChips();
+  buildGroupList();
+  buildLegend();
+  bindUI();
+  apply();
+}
+
+/* ── 圖層 ─────────────────────────────────────────── */
+function buildMarkers() {
+  DATA.hospitals.forEach((h) => {
+    if (h.lat == null) return;
+    const mk = L.circleMarker([h.lat, h.lon], {
+      radius: LEVEL_RADIUS[h.lv] || 5,
+      color: "#fff", weight: 1.2,
+      fillColor: FAMILY_COLOR[h.fam] || "#98a2b3", fillOpacity: .88,
+    });
+    mk.bindTooltip(`${h.n}<br><small>${h.lv}・${groupLabel(h)}</small>`,
+      { direction: "top", offset: [0, -4] });
+    mk.on("click", () => showHospital(h));
+    mk._h = h;
+    markers.set(h.id, mk);
+  });
+}
+
+function groupLabel(h) {
+  const gid = h.pg || h.og;
+  if (gid && DATA.groups[gid]) return DATA.groups[gid].short || DATA.groups[gid].name;
+  return h.ik || "獨立醫院";
+}
+
+/* ── 篩選 UI ──────────────────────────────────────── */
+function buildChips() {
+  const famBox = $("#familyChips");
+  DATA.family_order.forEach((f) => {
+    const c = el("div", "chip",
+      `<span class="dot" style="background:${FAMILY_COLOR[f]}"></span>${f}`);
+    c.onclick = () => { toggle(S.families, f); c.classList.toggle("on"); apply(); };
+    famBox.appendChild(c);
+  });
+
+  const lvBox = $("#levelChips");
+  LEVELS.forEach((l) => {
+    const c = el("div", "chip", l);
+    c.onclick = () => { toggle(S.levels, l); c.classList.toggle("on"); apply(); };
+    lvBox.appendChild(c);
+  });
+
+  const counts = {};
+  DATA.hospitals.forEach((h) => h.tg.forEach((t) => counts[t] = (counts[t] || 0) + 1));
+  const tagBox = $("#tagChips");
+  Object.entries(counts).sort((a, b) => b[1] - a[1]).forEach(([t, n]) => {
+    const c = el("div", "chip", `${t}<span class="muted">${n}</span>`);
+    c.onclick = () => { toggle(S.tags, t); c.classList.toggle("on"); apply(); };
+    tagBox.appendChild(c);
+  });
+}
+
+function toggle(set, v) { set.has(v) ? set.delete(v) : set.add(v); }
+
+function buildGroupList() {
+  const list = $("#groupList");
+  const rows = Object.entries(DATA.group_stats)
+    .map(([gid, s]) => ({ gid, s, g: DATA.groups[gid] }))
+    .filter((r) => r.g)
+    .sort((a, b) => b.s.count - a.s.count || a.g.name.localeCompare(b.g.name, "zh-Hant"));
+  $("#groupCount").textContent = `(${rows.length})`;
+  rows.forEach(({ gid, s, g }) => {
+    const item = el("div", "group-item");
+    item.dataset.gid = gid;
+    item.innerHTML =
+      `<span class="bar" style="background:${FAMILY_COLOR[g.family]}"></span>` +
+      `<span class="gname">${esc(g.name)}<small>${esc(g.backer || g.kind)}</small></span>` +
+      `<span class="gcount">${s.count}</span>`;
+    item.onclick = () => selectGroup(S.group === gid ? null : gid);
+    list.appendChild(item);
+  });
+}
+
+function buildLegend() {
+  const box = $("#legend");
+  DATA.family_order.forEach((f) => {
+    box.appendChild(el("div", null,
+      `<i style="background:${FAMILY_COLOR[f]}"></i>${f}`));
+  });
+  box.appendChild(el("div", "sizes", "圈越大＝層級越高（醫學中心 ▸ 區域 ▸ 地區）"));
+}
+
+function bindUI() {
+  let t;
+  $("#q").oninput = (e) => {
+    clearTimeout(t);
+    t = setTimeout(() => { S.q = e.target.value.trim(); apply(); }, 180);
+  };
+  $("#showLinks").onchange = (e) => { S.showLinks = e.target.checked; drawLinks(); };
+  $("#btnReset").onclick = () => {
+    S.q = ""; S.families.clear(); S.levels.clear(); S.tags.clear();
+    $("#q").value = "";
+    document.querySelectorAll(".chip.on").forEach((c) => c.classList.remove("on"));
+    selectGroup(null);
+    map.setView([23.7, 120.95], 8);
+  };
+  $("#btnAnalysis").onclick = showAnalysis;
+  $("#detailClose").onclick = () => {
+    $("#detail").classList.add("closed");
+    document.body.classList.remove("drawer-open");
+  };
+}
+
+/* ── 套用篩選 ─────────────────────────────────────── */
+function match(h) {
+  if (S.group && (h.pg || h.og) !== S.group) return false;
+  if (S.families.size && !S.families.has(h.fam)) return false;
+  if (S.levels.size && !S.levels.has(h.lv)) return false;
+  if (S.tags.size && ![...S.tags].every((t) => h.tg.includes(t))) return false;
+  if (S.q) {
+    const hay = `${h.n} ${h.ad} ${h.ct}${h.tw} ${h.dp.join("")} ${h.tg.join("")} ${groupLabel(h)}`;
+    if (!hay.includes(S.q)) return false;
+  }
+  return true;
+}
+
+function apply() {
+  markerLayer.clearLayers();
+  let shown = 0, noGeo = 0;
+  DATA.hospitals.forEach((h) => {
+    const mk = markers.get(h.id);
+    if (!match(h)) return;
+    shown++;
+    if (!mk) { noGeo++; return; }
+    markerLayer.addLayer(mk);
+  });
+  $("#counter").innerHTML =
+    `${shown} 家醫院 <span>／ 全台 ${DATA.meta.hospital_count} 家` +
+    (noGeo ? `・${noGeo} 家未定位` : "") + `</span>`;
+  drawLinks();
+}
+
+/* 布點連線：由體系重心拉線到各院區，凸顯版圖擴張路徑 */
+function drawLinks() {
+  linkLayer.clearLayers();
+  if (!S.showLinks) return;
+  const byGroup = new Map();
+  DATA.hospitals.forEach((h) => {
+    if (h.lat == null || !match(h)) return;
+    const gid = h.pg || h.og;
+    if (!gid) return;
+    if (!byGroup.has(gid)) byGroup.set(gid, []);
+    byGroup.get(gid).push(h);
+  });
+  byGroup.forEach((hs, gid) => {
+    if (hs.length < 2) return;
+    const g = DATA.groups[gid];
+    const cx = hs.reduce((a, h) => a + h.lat, 0) / hs.length;
+    const cy = hs.reduce((a, h) => a + h.lon, 0) / hs.length;
+    hs.forEach((h) => {
+      linkLayer.addLayer(L.polyline([[cx, cy], [h.lat, h.lon]], {
+        color: FAMILY_COLOR[g ? g.family : "獨立醫院"],
+        weight: 1, opacity: .45, dashArray: "3,4", interactive: false,
+      }));
+    });
+    linkLayer.addLayer(L.circleMarker([cx, cy], {
+      radius: 3, color: FAMILY_COLOR[g ? g.family : "獨立醫院"],
+      weight: 1, fillOpacity: 1, interactive: false,
+    }));
+  });
+}
+
+function selectGroup(gid) {
+  S.group = gid;
+  document.querySelectorAll(".group-item").forEach((n) =>
+    n.classList.toggle("on", n.dataset.gid === gid));
+  apply();
+  if (gid) {
+    const pts = DATA.hospitals.filter((h) => (h.pg || h.og) === gid && h.lat != null)
+      .map((h) => [h.lat, h.lon]);
+    // 右側詳情抽屜會蓋住地圖，縮放時預留空間
+    if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(.15), {
+      maxZoom: 12, paddingTopLeft: [20, 20],
+      paddingBottomRight: [drawerWidth() + 20, 20],
+    });
+    showGroup(gid);
+  }
+}
+
+/* ── 詳情面板 ─────────────────────────────────────── */
+function drawerWidth() {
+  const d = $("#detail");
+  return (d.classList.contains("closed") || window.innerWidth <= 860) ? 0 : d.offsetWidth;
+}
+
+function openDetail(html) {
+  $("#detailBody").innerHTML = html;
+  $("#detail").classList.remove("closed");
+  document.body.classList.add("drawer-open");
+  $("#detailBody").scrollTop = 0;
+}
+
+function ownerCard(gid, label) {
+  const g = DATA.groups[gid];
+  if (!g) return "";
+  const color = FAMILY_COLOR[g.family];
+  return `<div class="section-t">${label}</div>
+    <div class="owner-card" style="border-left-color:${color}">
+      <div class="oname">${esc(g.name)}</div>
+      ${g.backer ? `<div class="obacker">背後主體：${esc(g.backer)}</div>` : ""}
+      <div style="margin-top:6px">
+        <span class="badge solid" style="background:${color}">${esc(g.family)}</span>
+        <span class="badge">${esc(g.kind)}</span>
+        ${g.founded ? `<span class="badge">創立 ${esc(g.founded)}</span>` : ""}
+        <span class="badge">${(DATA.group_stats[gid] || {}).count || 0} 家院所</span>
+      </div>
+      ${g.note ? `<p>${esc(g.note)}</p>` : ""}
+      <div class="links">
+        ${g.website ? `<a href="${esc(g.website)}" target="_blank" rel="noopener">體系官方網站 ↗</a>` : ""}
+        <a href="#" data-gid="${gid}" class="js-group">查看體系版圖 →</a>
+      </div>
+    </div>`;
+}
+
+function showHospital(h) {
+  const gid = h.pg || h.og;
+  const delegated = h.dl && h.og && h.pg && h.og !== h.pg;
+  let html = `<h3>${esc(h.n)}</h3>
+    <div class="sub">${esc(h.ct)}${esc(h.tw)}・${esc(h.lv)}・${esc(h.kd)}</div>
+    <div>${h.tg.map((t) => `<span class="badge">${esc(t)}</span>`).join("")}</div>
+    <dl class="kv">
+      <dt>地址</dt><dd>${esc(h.ad)}</dd>
+      <dt>電話</dt><dd>${esc(h.ph)}</dd>
+      <dt>經營體系</dt><dd>${esc(groupLabel(h))}</dd>
+    </dl>`;
+
+  if (delegated) {
+    html += ownerCard(h.og, "產權／設立主體");
+    html += ownerCard(h.pg, "受託經營團隊（公辦民營）");
+    html += `<p class="note" style="margin-top:8px">院名登記之委託對象：${esc(h.dl)}</p>`;
+  } else if (gid) {
+    html += ownerCard(gid, "經營體系");
+  } else {
+    html += `<div class="section-t">經營型態</div>
+      <div class="owner-card" style="border-left-color:${FAMILY_COLOR["獨立醫院"]}">
+        <div class="oname">${esc(h.ik || "獨立醫院")}</div>
+        <p>未隸屬於本專案已彙整的大型醫療體系，多為單一院區或家族經營。</p>
+      </div>`;
+  }
+
+  if (h.note) html += `<div class="section-t">院方備註（健保署）</div><p class="note">${esc(h.note)}</p>`;
+
+  html += `<div class="section-t">診療科別（${h.dp.length}）</div>
+    <div>${h.dp.map((d) => `<span class="badge">${esc(d)}</span>`).join("")}</div>
+    <div class="section-t">外部連結</div>
+    <div class="links">
+      <a href="${esc(h.mu)}" target="_blank" rel="noopener">Google 地圖 ↗</a>
+      <a href="${esc(h.su)}" target="_blank" rel="noopener">搜尋官方網站 ↗</a>
+    </div>`;
+  if (h.gm === "town-centroid")
+    html += `<p class="note" style="margin-top:12px">※ 此點為鄉鎮市區概略中心，非精確門牌座標。</p>`;
+
+  openDetail(html);
+  bindDetailLinks();
+  const mk = markers.get(h.id);
+  if (mk) map.setView(mk.getLatLng(), Math.max(map.getZoom(), 13));
+}
+
+function bars(entries, color, onClick) {
+  const max = Math.max(...entries.map((e) => e[1]), 1);
+  const box = entries.map(([k, v], i) =>
+    `<div class="row" data-k="${esc(k)}" data-i="${i}">
+       <span class="label">${esc(k)}</span>
+       <span class="track"><span class="fill" style="width:${(v / max * 100).toFixed(1)}%;background:${color}"></span></span>
+       <span class="num">${v}</span>
+     </div>`).join("");
+  return `<div class="bars" ${onClick ? 'data-click="1"' : ""}>${box}</div>`;
+}
+
+function showGroup(gid) {
+  const g = DATA.groups[gid], s = DATA.group_stats[gid];
+  if (!g || !s) return;
+  const color = FAMILY_COLOR[g.family];
+  const hs = DATA.hospitals.filter((h) => (h.pg || h.og) === gid)
+    .sort((a, b) => LEVELS.indexOf(a.lv) - LEVELS.indexOf(b.lv) || a.ct.localeCompare(b.ct, "zh-Hant"));
+
+  let html = `<h3>${esc(g.name)}</h3>
+    <div class="sub">${esc(g.kind)}${g.founded ? "・創立 " + esc(g.founded) : ""}</div>
+    <div>
+      <span class="badge solid" style="background:${color}">${esc(g.family)}</span>
+      <span class="badge">${s.count} 家院所</span>
+      <span class="badge">${Object.keys(s.county_counts).length} 個縣市</span>
+    </div>`;
+  if (g.backer) html += `<dl class="kv"><dt>背後主體</dt><dd>${esc(g.backer)}</dd></dl>`;
+  if (g.note) html += `<p class="note">${esc(g.note)}</p>`;
+  if (g.website) html += `<div class="links"><a href="${esc(g.website)}" target="_blank" rel="noopener">體系官方網站 ↗</a></div>`;
+
+  html += `<div class="section-t">層級組成</div>` +
+    bars(LEVELS.filter((l) => s.levels[l]).map((l) => [l, s.levels[l]]), color);
+  html += `<div class="section-t">縣市布點</div>` +
+    bars(Object.entries(s.county_counts).sort((a, b) => b[1] - a[1]), color);
+  if (s.tags.length)
+    html += `<div class="section-t">體系醫療特色</div><div>${s.tags.map((t) => `<span class="badge">${esc(t)}</span>`).join("")}</div>`;
+
+  html += `<div class="section-t">院所清單</div>` + hs.map((h) =>
+    `<div class="hosp-line js-hosp" data-id="${h.id}">${esc(h.n)}<br><small>${esc(h.ct)}${esc(h.tw)}・${esc(h.lv)}${h.dl ? "・公辦民營" : ""}</small></div>`).join("");
+
+  openDetail(html);
+  bindDetailLinks();
+}
+
+function showAnalysis() {
+  const rows = Object.entries(DATA.group_stats)
+    .map(([gid, s]) => [gid, s.count])
+    .sort((a, b) => b[1] - a[1]).slice(0, 20);
+  const famCount = {};
+  DATA.hospitals.forEach((h) => famCount[h.fam] = (famCount[h.fam] || 0) + 1);
+
+  let html = `<h3>經營版圖總覽</h3>
+    <div class="sub">全台 ${DATA.meta.hospital_count} 家健保特約醫院的經營結構</div>
+    <div class="section-t">經營型態占比</div>` +
+    bars(DATA.family_order.filter((f) => famCount[f]).map((f) => [f, famCount[f]]), "#6b7f99");
+
+  html += `<div class="section-t">體系規模 Top 20</div>` +
+    `<div class="bars" data-click="1">` +
+    rows.map(([gid, n]) => {
+      const g = DATA.groups[gid];
+      const max = rows[0][1];
+      return `<div class="row js-group-row" data-gid="${gid}">
+        <span class="label">${esc(g.short || g.name)}</span>
+        <span class="track"><span class="fill" style="width:${(n / max * 100).toFixed(1)}%;background:${FAMILY_COLOR[g.family]}"></span></span>
+        <span class="num">${n}</span></div>`;
+    }).join("") + `</div>`;
+
+  html += `<div class="section-t">各縣市醫院數</div>` +
+    bars(Object.entries(DATA.county_counts).sort((a, b) => b[1] - a[1]), "#2f6fd0");
+  html += `<div class="section-t">醫學中心分布</div>` +
+    bars(Object.entries(DATA.county_center_counts).sort((a, b) => b[1] - a[1]), "#e0563f");
+
+  html += `<div class="section-t">資料來源</div><div class="links">` +
+    DATA.meta.sources.map((s) => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)} ↗</a>`).join("<br>") +
+    `</div><p class="note" style="margin-top:10px">經營體系歸屬依院所全名中的法人主體判定，並人工比對各體系公開資訊；「背後主體」為公開可查的創辦或出資方，僅供研究參考。</p>`;
+
+  openDetail(html);
+  bindDetailLinks();
+}
+
+function bindDetailLinks() {
+  $("#detailBody").querySelectorAll(".js-hosp").forEach((n) => {
+    n.onclick = () => {
+      const h = DATA.hospitals.find((x) => x.id === n.dataset.id);
+      if (h) showHospital(h);
+    };
+  });
+  $("#detailBody").querySelectorAll(".js-group, .js-group-row").forEach((n) => {
+    n.onclick = (e) => { e.preventDefault(); selectGroup(n.dataset.gid); };
+  });
+}
+})();
