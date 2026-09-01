@@ -106,10 +106,25 @@ button.ghost:hover { border-color: var(--accent); color: var(--accent); }
   border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow);
   font-size: 11.5px; padding: 8px 10px;
 }
-.legend { right: 12px; bottom: 22px; transition: right .22s ease; }
-body.drawer-open .legend { right: 392px; }
-body.drawer-open .counter { right: 392px; }
-.legend div { display: flex; align-items: center; gap: 6px; padding: 1.5px 0; }
+.legend { right: 12px; bottom: 22px; padding-right: 24px; transition: right .22s ease; }
+body.drawer-open .legend,
+body.drawer-open .counter,
+body.drawer-open .legend-show { right: 392px; }
+.legend-close {
+  position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; padding: 0;
+  border: none; border-radius: 50%; background: transparent; color: #98a2b3;
+  font-size: 15px; line-height: 1; cursor: pointer;
+}
+.legend-close:hover { background: #eef1f6; color: var(--ink); }
+.legend-show {
+  position: absolute; right: 12px; bottom: 22px; z-index: 800; cursor: pointer;
+  font: inherit; font-size: 11.5px; padding: 5px 11px; border-radius: 8px;
+  border: 1px solid var(--line); background: rgba(255,255,255,.94); color: var(--ink-soft);
+  box-shadow: var(--shadow); transition: right .22s ease;
+}
+.legend-show:hover { border-color: var(--accent); color: var(--accent); }
+/* 只讓圖例的每一列排成 flex；容器本身要維持 block，否則整個圖例會被撐成一整排 */
+#legendItems > div { display: flex; align-items: center; gap: 6px; padding: 1.5px 0; }
 .legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 .legend .sizes { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 6px; color: var(--ink-soft); }
 .counter { right: 12px; top: 12px; font-weight: 600; transition: right .22s ease; }
