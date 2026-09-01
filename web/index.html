@@ -50,7 +50,11 @@
 
   <main id="mapWrap">
     <div id="map"></div>
-    <div id="legend" class="legend"></div>
+    <div id="legend" class="legend">
+      <button id="legendClose" class="legend-close" title="關閉圖例" aria-label="關閉圖例">×</button>
+      <div id="legendItems"></div>
+    </div>
+    <button id="legendShow" class="legend-show" hidden>圖例</button>
     <div id="counter" class="counter"></div>
   </main>
 

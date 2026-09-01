@@ -215,13 +215,27 @@ function buildGroupList() {
   });
 }
 
+const LEGEND_KEY = "twhm.legendHidden";
+
 function buildLegend() {
-  const box = $("#legend");
+  const box = $("#legendItems");
   DATA.family_order.forEach((f) => {
     box.appendChild(el("div", null,
       `<i style="background:${FAMILY_COLOR[f]}"></i>${f}`));
   });
   box.appendChild(el("div", "sizes", "圈越大＝層級越高（醫學中心 ▸ 區域 ▸ 地區）"));
+
+  let hidden = false;
+  try { hidden = localStorage.getItem(LEGEND_KEY) === "1"; } catch (e) { /* 無痕模式等情境 */ }
+  setLegend(!hidden);
+  $("#legendClose").onclick = () => setLegend(false);
+  $("#legendShow").onclick = () => setLegend(true);
+}
+
+function setLegend(show) {
+  $("#legend").hidden = !show;
+  $("#legendShow").hidden = show;
+  try { localStorage.setItem(LEGEND_KEY, show ? "0" : "1"); } catch (e) { /* 忽略 */ }
 }
 
 function bindUI() {
