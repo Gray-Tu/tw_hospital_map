@@ -60,6 +60,10 @@ button.ghost:hover { border-color: var(--accent); color: var(--accent); }
   border-radius: 7px; background: #fafbfc;
 }
 #q:focus { outline: none; border-color: var(--accent); background: #fff; }
+#county {
+  width: 100%; font: inherit; font-size: 12.5px; margin-top: 6px; padding: 6px 8px;
+  border: 1px solid var(--line); border-radius: 7px; background: #fafbfc; color: var(--ink);
+}
 
 .filter-block { padding: 10px 14px; border-top: 1px solid var(--line); }
 .filter-block.grow { flex: 1; display: flex; flex-direction: column; min-height: 0; }
@@ -157,8 +161,9 @@ body.drawer-open .counter { right: 392px; }
 .links a:hover { border-bottom-color: var(--accent); }
 .bars { margin-top: 6px; }
 .bars .row { display: grid; grid-template-columns: 96px 1fr 34px; gap: 8px; align-items: center;
-  font-size: 12px; margin-bottom: 4px; cursor: pointer; }
-.bars .row:hover .label { color: var(--accent); }
+  font-size: 12px; margin-bottom: 4px; }
+.bars .row[class*="js-"] { cursor: pointer; }
+.bars .row[class*="js-"]:hover .label { color: var(--accent); }
 .bars .track { background: #eef1f6; border-radius: 3px; height: 9px; overflow: hidden; }
 .bars .fill { height: 100%; border-radius: 3px; }
 .bars .num { text-align: right; color: var(--ink-soft); font-variant-numeric: tabular-nums; }

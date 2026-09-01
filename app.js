@@ -15,7 +15,7 @@ const LEVELS = ["醫學中心", "區域醫院", "地區醫院"];
 const LEVEL_RADIUS = { "醫學中心": 9, "區域醫院": 6.5, "地區醫院": 4.5 };
 
 const S = {           // 篩選狀態
-  q: "", families: new Set(), levels: new Set(), tags: new Set(),
+  q: "", county: "", families: new Set(), levels: new Set(), tags: new Set(),
   group: null, showLinks: false,
 };
 let DATA, map, markerLayer, linkLayer, markers = new Map();
@@ -55,6 +55,7 @@ function init() {
   new ResizeObserver(() => map.invalidateSize()).observe($("#mapWrap"));
   buildMarkers();
   buildChips();
+  buildCountySelect();
   buildGroupList();
   buildLegend();
   bindUI();
@@ -113,6 +114,26 @@ function buildChips() {
 
 function toggle(set, v) { set.has(v) ? set.delete(v) : set.add(v); }
 
+function buildCountySelect() {
+  const sel = $("#county");
+  Object.entries(DATA.county_counts).sort((a, b) => b[1] - a[1]).forEach(([c, n]) => {
+    const o = document.createElement("option");
+    o.value = c; o.textContent = `${c}（${n}）`;
+    sel.appendChild(o);
+  });
+  sel.onchange = () => { S.county = sel.value; apply(); zoomToCounty(); };
+}
+
+function zoomToCounty() {
+  const pts = DATA.hospitals.filter((h) => h.lat != null && (!S.county || h.ct === S.county))
+    .map((h) => [h.lat, h.lon]);
+  if (!pts.length) return;
+  map.fitBounds(L.latLngBounds(pts).pad(.15), {
+    maxZoom: 12, paddingTopLeft: [20, 20],
+    paddingBottomRight: [drawerWidth() + 20, 20],
+  });
+}
+
 function buildGroupList() {
   const list = $("#groupList");
   const rows = Object.entries(DATA.group_stats)
@@ -149,8 +170,8 @@ function bindUI() {
   };
   $("#showLinks").onchange = (e) => { S.showLinks = e.target.checked; drawLinks(); };
   $("#btnReset").onclick = () => {
-    S.q = ""; S.families.clear(); S.levels.clear(); S.tags.clear();
-    $("#q").value = "";
+    S.q = ""; S.county = ""; S.families.clear(); S.levels.clear(); S.tags.clear();
+    $("#q").value = ""; $("#county").value = "";
     document.querySelectorAll(".chip.on").forEach((c) => c.classList.remove("on"));
     selectGroup(null);
     map.setView([23.7, 120.95], 8);
@@ -165,6 +186,7 @@ function bindUI() {
 /* ── 套用篩選 ─────────────────────────────────────── */
 function match(h) {
   if (S.group && (h.pg || h.og) !== S.group) return false;
+  if (S.county && h.ct !== S.county) return false;
   if (S.families.size && !S.families.has(h.fam)) return false;
   if (S.levels.size && !S.levels.has(h.lv)) return false;
   if (S.tags.size && ![...S.tags].every((t) => h.tg.includes(t))) return false;
@@ -305,8 +327,9 @@ function showHospital(h) {
     <div>${h.dp.map((d) => `<span class="badge">${esc(d)}</span>`).join("")}</div>
     <div class="section-t">外部連結</div>
     <div class="links">
+      ${h.web ? `<a href="${esc(h.web)}" target="_blank" rel="noopener">醫院官方網站 ↗</a>` : ""}
       <a href="${esc(h.mu)}" target="_blank" rel="noopener">Google 地圖 ↗</a>
-      <a href="${esc(h.su)}" target="_blank" rel="noopener">搜尋官方網站 ↗</a>
+      ${h.web ? "" : `<a href="${esc(h.su)}" target="_blank" rel="noopener">搜尋官方網站 ↗</a>`}
     </div>`;
   if (h.gm === "town-centroid")
     html += `<p class="note" style="margin-top:12px">※ 此點為鄉鎮市區概略中心，非精確門牌座標。</p>`;
@@ -317,15 +340,15 @@ function showHospital(h) {
   if (mk) map.setView(mk.getLatLng(), Math.max(map.getZoom(), 13));
 }
 
-function bars(entries, color, onClick) {
+function bars(entries, color, clickKind) {
   const max = Math.max(...entries.map((e) => e[1]), 1);
-  const box = entries.map(([k, v], i) =>
-    `<div class="row" data-k="${esc(k)}" data-i="${i}">
+  const box = entries.map(([k, v]) =>
+    `<div class="row${clickKind ? " js-" + clickKind : ""}" data-k="${esc(k)}">
        <span class="label">${esc(k)}</span>
        <span class="track"><span class="fill" style="width:${(v / max * 100).toFixed(1)}%;background:${color}"></span></span>
        <span class="num">${v}</span>
      </div>`).join("");
-  return `<div class="bars" ${onClick ? 'data-click="1"' : ""}>${box}</div>`;
+  return `<div class="bars">${box}</div>`;
 }
 
 function showGroup(gid) {
@@ -373,7 +396,7 @@ function showAnalysis() {
     bars(DATA.family_order.filter((f) => famCount[f]).map((f) => [f, famCount[f]]), "#6b7f99");
 
   html += `<div class="section-t">體系規模 Top 20</div>` +
-    `<div class="bars" data-click="1">` +
+    `<div class="bars">` +
     rows.map(([gid, n]) => {
       const g = DATA.groups[gid];
       const max = rows[0][1];
@@ -384,7 +407,7 @@ function showAnalysis() {
     }).join("") + `</div>`;
 
   html += `<div class="section-t">各縣市醫院數</div>` +
-    bars(Object.entries(DATA.county_counts).sort((a, b) => b[1] - a[1]), "#2f6fd0");
+    bars(Object.entries(DATA.county_counts).sort((a, b) => b[1] - a[1]), "#2f6fd0", "county");
   html += `<div class="section-t">醫學中心分布</div>` +
     bars(Object.entries(DATA.county_center_counts).sort((a, b) => b[1] - a[1]), "#e0563f");
 
@@ -401,6 +424,11 @@ function bindDetailLinks() {
     n.onclick = () => {
       const h = DATA.hospitals.find((x) => x.id === n.dataset.id);
       if (h) showHospital(h);
+    };
+  });
+  $("#detailBody").querySelectorAll(".js-county").forEach((n) => {
+    n.onclick = () => {
+      S.county = n.dataset.k; $("#county").value = S.county; apply(); zoomToCounty();
     };
   });
   $("#detailBody").querySelectorAll(".js-group, .js-group-row").forEach((n) => {
