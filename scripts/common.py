@@ -37,9 +37,28 @@ def split_address(addr: str):
             town = m.group(1)
     return county, town, a
 
-def street_of(addr: str) -> str:
-    """取到「路/街/大道」層級（不含縣市鄉鎮），供地址備援地理編碼使用。"""
+def _after_admin(addr: str) -> str:
+    """去掉縣市、鄉鎮市區，再去掉里／村／鄰，只留下街道以後的部分。
+
+    健保署地址常寫成「新竹市北區金華里經國路一段442巷25號」，
+    不先剝掉「金華里」會把里名黏進路名裡。
+    """
     county, town, a = split_address(addr)
     rest = a[len(county) + len(town):]
+    rest = re.sub(r"^[^\d]{1,5}[里村]", "", rest)
+    rest = re.sub(r"^\d+鄰", "", rest)
+    return rest
+
+
+def street_of(addr: str) -> str:
+    """取到「路/街/大道」層級（不含縣市鄉鎮里鄰），供地址備援地理編碼使用。"""
+    rest = _after_admin(addr)
     m = re.search(r"[^\s\d,，;；]{1,8}?(?:路|街|大道)(?:[一二三四五六七八九十]段)?", rest)
+    return m.group(0) if m else ""
+
+
+def lane_of(addr: str) -> str:
+    """取到「路(段)巷」層級，例如 經國路一段442巷；沒有巷弄時回傳空字串。"""
+    rest = _after_admin(addr)
+    m = re.match(r"[^\s\d,，;；]{1,8}?(?:路|街|大道)(?:[一二三四五六七八九十]段)?\d+巷", rest)
     return m.group(0) if m else ""

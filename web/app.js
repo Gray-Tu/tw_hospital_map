@@ -18,7 +18,7 @@ const S = {           // 篩選狀態
   q: "", county: "", families: new Set(), levels: new Set(), tags: new Set(),
   group: null, showLinks: false,
 };
-let DATA, map, markerLayer, linkLayer, markers = new Map();
+let DATA, map, markerLayer, linkLayer, highlight, markers = new Map();
 
 const $ = (sel) => document.querySelector(sel);
 const el = (tag, cls, html) => {
@@ -29,6 +29,8 @@ const el = (tag, cls, html) => {
 };
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+// 搜尋用正規化：台/臺 通用、英數不分大小寫（使用者常打「台大」找「臺灣大學」）
+const norm = (s) => String(s ?? "").replace(/台/g, "臺").toLowerCase();
 
 /* ── 啟動 ─────────────────────────────────────────── */
 fetch("data/app_data.json")
@@ -177,9 +179,13 @@ function bindUI() {
     map.setView([23.7, 120.95], 8);
   };
   $("#btnAnalysis").onclick = showAnalysis;
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") $("#detailClose").click();
+  });
   $("#detailClose").onclick = () => {
     $("#detail").classList.add("closed");
     document.body.classList.remove("drawer-open");
+    if (highlight) { map.removeLayer(highlight); highlight = null; }
   };
 }
 
@@ -191,8 +197,8 @@ function match(h) {
   if (S.levels.size && !S.levels.has(h.lv)) return false;
   if (S.tags.size && ![...S.tags].every((t) => h.tg.includes(t))) return false;
   if (S.q) {
-    const hay = `${h.n} ${h.ad} ${h.ct}${h.tw} ${h.dp.join("")} ${h.tg.join("")} ${groupLabel(h)}`;
-    if (!hay.includes(S.q)) return false;
+    const hay = norm(`${h.n} ${h.ad} ${h.ct}${h.tw} ${h.dp.join("")} ${h.tg.join("")} ${groupLabel(h)}`);
+    if (!hay.includes(norm(S.q))) return false;
   }
   return true;
 }
@@ -337,7 +343,14 @@ function showHospital(h) {
   openDetail(html);
   bindDetailLinks();
   const mk = markers.get(h.id);
-  if (mk) map.setView(mk.getLatLng(), Math.max(map.getZoom(), 13));
+  if (mk) {
+    map.setView(mk.getLatLng(), Math.max(map.getZoom(), 13));
+    if (highlight) map.removeLayer(highlight);
+    highlight = L.circleMarker(mk.getLatLng(), {
+      radius: 15, color: FAMILY_COLOR[h.fam] || "#98a2b3", weight: 2,
+      fill: false, dashArray: "4,3", interactive: false,
+    }).addTo(map);
+  }
 }
 
 function bars(entries, color, clickKind) {

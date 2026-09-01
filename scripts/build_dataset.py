@@ -23,27 +23,36 @@ def _has(items, *keys):
 
 
 def derive_tags(name, kind, depts, services):
+    """由診療科別與服務項目推導醫療特色標籤。
+
+    注意：健保署「服務項目」用全形破折號（復健－物理治療業務），
+    正規化後會變成半形，因此一律比對不含破折號的關鍵字。
+    """
     tags = []
     if kind == "精神科醫院" or _has(services, "精神科日間住院", "精神病患者居家"):
         tags.append("精神醫療")
-    if kind == "慢性醫院" or _has(services, "居家照護") and kind == "慢性醫院":
+    if kind == "慢性醫院":
         tags.append("慢性照護")
-    if _has(depts, "放射腫瘤科") or _has(services, "胸部低劑量電腦斷層") and _has(depts, "核子醫學科") or "癌" in name:
+    if _has(depts, "放射腫瘤科") or "癌" in name:
         tags.append("癌症治療")
+    if _has(depts, "核子醫學科"):
+        tags.append("核子醫學")
     if _has(services, "血液透析", "腹膜透析"):
         tags.append("洗腎透析")
     if _has(services, "安寧"):
         tags.append("安寧療護")
     if _has(services, "分娩") and _has(depts, "婦產科"):
         tags.append("婦產分娩")
-    if _has(depts, "兒科", "兒童牙科") and ("兒童" in name or _has(services, "分娩")):
+    if re.search(r"兒童|婦幼|小兒", name) or _has(depts, "兒童牙科"):
         tags.append("兒童醫療")
     if _has(depts, "中醫"):
         tags.append("中醫")
     if _has(depts, "牙科", "口腔"):
         tags.append("牙科口腔")
-    if _has(services, "復健－物理治療", "復健－職能治療", "復健－語言治療"):
+    if _has(services, "物理治療", "職能治療", "語言治療"):
         tags.append("復健治療")
+    if _has(services, "聽力"):
+        tags.append("聽力語言治療")
     if _has(services, "急診業務"):
         tags.append("急診")
     if _has(services, "結核病"):
@@ -52,7 +61,9 @@ def derive_tags(name, kind, depts, services):
         tags.append("職業醫學")
     if _has(services, "義肢業務"):
         tags.append("義肢輔具")
-    if _has(depts, "骨科") and re.search(r"骨科|脊椎", name):
+    if _has(services, "居家照護", "居家療護"):
+        tags.append("居家醫療")
+    if re.search(r"骨科|脊椎", name):
         tags.append("骨科脊椎專科")
     if re.search(r"婦幼|婦產|蕙馨|婦女", name):
         tags.append("婦幼專科")

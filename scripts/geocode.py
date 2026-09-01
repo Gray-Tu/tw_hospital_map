@@ -15,11 +15,12 @@ import urllib.parse, urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
-from common import canon, street_of  # noqa: E402
+from common import canon, lane_of, street_of  # noqa: E402
 
 CACHE_PATH = os.path.join(ROOT, "data", "processed", "geocode_cache.json")
+LIMIT = 5   # 取多筆候選，再挑行政區相符者，避免比對到同名的別家機構
 UA = "tw-hospital-map/0.1 (open-data research)"
-BBOX = (21.5, 25.5, 118.0, 122.3)  # 南, 北, 西, 東（含離島）
+BBOX = (21.5, 26.5, 118.0, 122.3)  # 南, 北, 西, 東（北界須含馬祖 26.2N，金門在西界 118.2E）
 SLEEP = 1.1
 
 # 院名主體萃取：砍掉法人／基金會前綴與委託子句
@@ -51,11 +52,12 @@ OFFLINE = "--offline" in sys.argv  # 只用快取、不連網（供背景任務�
 
 
 def nominatim(query, cache):
+    """回傳候選清單 [{lat, lon, display}, ...]（可能為空）。"""
     if query in cache:
         return cache[query]
     if OFFLINE:
-        return None
-    url = ("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1"
+        return []
+    url = (f"https://nominatim.openstreetmap.org/search?format=jsonv2&limit={LIMIT}"
            "&countrycodes=tw&accept-language=zh-TW&q=" + urllib.parse.quote(query))
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     try:
@@ -64,12 +66,33 @@ def nominatim(query, cache):
     except Exception as e:  # 網路失敗不寫入快取，下次重試
         print("   ! 查詢失敗", query, e)
         return None
-    res = None
-    if data:
-        d = data[0]
-        res = {"lat": float(d["lat"]), "lon": float(d["lon"]),
-               "display": d.get("display_name", "")}
+    res = [{"lat": float(d["lat"]), "lon": float(d["lon"]),
+            "display": d.get("display_name", "")} for d in data]
     cache[query] = res
+    time.sleep(SLEEP)
+    return res
+
+
+def nominatim_structured(street, city, cache):
+    """結構化查詢（street + city）。自由字串查不到的台灣路名，這個介面常常查得到。"""
+    key = f"S|{city}|{street}"
+    if key in cache:
+        return cache[key]
+    if OFFLINE:
+        return []
+    url = (f"https://nominatim.openstreetmap.org/search?format=jsonv2&limit={LIMIT}"
+           "&countrycodes=tw&accept-language=zh-TW"
+           f"&street={urllib.parse.quote(street)}&city={urllib.parse.quote(city)}")
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            data = json.loads(r.read().decode("utf-8"))
+    except Exception as e:
+        print("   ! 結構化查詢失敗", key, e)
+        return None
+    res = [{"lat": float(d["lat"]), "lon": float(d["lon"]),
+            "display": d.get("display_name", "")} for d in data]
+    cache[key] = res
     time.sleep(SLEEP)
     return res
 
@@ -86,6 +109,13 @@ def county_ok(r, county):
     return county in disp or county.rstrip("市縣") in disp
 
 
+def town_ok(r, town):
+    """鄉鎮市區是否相符。用來擋掉「同縣市但比對到別家同名醫院／診所」的情形。"""
+    if not town:
+        return True
+    return town in canon(r.get("display", ""))
+
+
 def geocode_one(h, cache):
     county, town = h["county"], h["town"]
     core = core_name(h["name"])
@@ -94,16 +124,30 @@ def geocode_one(h, cache):
         (f"{core} {county}", "name+county"),
     ]
     st = street_of(h["address"])
+    lane = lane_of(h["address"])
     if st:
         attempts.append((f"{county}{town}{st}", "street"))
+    if lane:
+        attempts.append(((lane, county), "lane-structured"))
+    if st:
+        attempts.append(((st, county), "street-structured"))
     if county and town:
         attempts.append((f"{county}{town}", "town-centroid"))
 
-    for q, method in attempts:
-        r = nominatim(q, cache)
-        if r and in_taiwan(r) and county_ok(r, county):
-            return {"lat": r["lat"], "lon": r["lon"], "geo_method": method,
-                    "geo_query": q, "geo_display": r["display"]}
+    # 先要求鄉鎮市區也相符（擋掉同縣市的同名機構）；全部落空再放寬到只比對縣市
+    for strict in (True, False):
+        for q, method in attempts:
+            hits = (nominatim_structured(q[0], q[1], cache) if isinstance(q, tuple)
+                    else nominatim(q, cache))
+            for r in hits or []:
+                if not (in_taiwan(r) and county_ok(r, county)):
+                    continue
+                if strict and method != "town-centroid" and not town_ok(r, town):
+                    continue
+                return {"lat": r["lat"], "lon": r["lon"],
+                        "geo_method": method if strict else method + "~",
+                        "geo_query": " ".join(q) if isinstance(q, tuple) else q,
+                        "geo_display": r["display"]}
     return {"lat": None, "lon": None, "geo_method": "failed", "geo_query": core,
             "geo_display": ""}
 
