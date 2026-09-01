@@ -150,7 +150,7 @@
       "kind": "企業財團",
       "backer": "東元集團（黃茂雄家族）",
       "founded": "1998",
-      "website": "https://www.tewh.org.tw/",
+      "website": "",
       "note": "東元電機集團投資設立，深耕新竹科學園區周邊。",
       "patterns": [
         "東元醫療社團法人",
@@ -229,7 +229,7 @@
       "kind": "宗教（基督教）",
       "backer": "基督教山地醫療傳統（謝緯醫師等）",
       "founded": "1955",
-      "website": "https://www.pcht.org.tw/",
+      "website": "",
       "note": "南投山區重要後送醫院，921 震災後重建擴充。",
       "patterns": [
         "埔基醫療財團法人"
@@ -268,7 +268,7 @@
       "kind": "宗教（基督教）",
       "backer": "挪威宣教士譚維義創立",
       "founded": "1969",
-      "website": "https://www.tths.org.tw/",
+      "website": "",
       "note": "台東基督教醫院，偏鄉醫療與兒童發展早療見長。",
       "patterns": [
         "東基醫療財團法人"
@@ -372,7 +372,7 @@
       "kind": "宗教（天主教）",
       "backer": "沙爾德聖保祿修女會（法國）",
       "founded": "1962",
-      "website": "https://www.stpauls.org.tw/",
+      "website": "",
       "note": "桃園市區教會醫院。",
       "patterns": [
         "聖保祿修女會醫療財團法人"
@@ -542,7 +542,7 @@
       "kind": "國立大學（教育部）",
       "backer": "國立成功大學／教育部",
       "founded": "1988",
-      "website": "https://web.hosp.ncku.edu.tw/",
+      "website": "https://nckuh.hosp.ncku.edu.tw/",
       "note": "南台灣重症與臨床研究重鎮，另設斗六分院。",
       "patterns": [
         "國立成功大學醫學院附設"
@@ -555,7 +555,7 @@
       "kind": "國立大學（教育部）",
       "backer": "國立陽明交通大學／教育部",
       "founded": "2000",
-      "website": "https://www.ymuh.ym.edu.tw/",
+      "website": "",
       "note": "由原署立宜蘭醫院改隸而成的大學附設醫院。",
       "patterns": [
         "國立陽明交通大學附設"
@@ -568,7 +568,7 @@
       "kind": "大學醫療體系（天主教）",
       "backer": "天主教輔仁大學",
       "founded": "2017",
-      "website": "https://www.fjuh.fju.edu.tw/",
+      "website": "",
       "note": "新莊副都心新設教學醫院，補上新北西區的醫療缺口。",
       "patterns": [
         "輔仁大學附設醫院"
@@ -806,9 +806,14 @@
       "backer": "澄清綜合醫院（中港、平等兩系同源）",
       "founded": "1935",
       "website": "https://www.ccgh.com.tw/",
-      "note": "台中老牌私院；中港院區與平等街本院同源同名但分屬不同法人主體。",
+      "note": "台中老牌私院，以「澄清」為共同品牌的院所群；中港院區與平等街本院同源同名，各院所為分別登記的法人主體。高雄澄清國際眼科醫院與本體系無關。",
       "patterns": [
-        "澄清綜合醫院"
+        "澄清綜合醫院",
+        "新太平澄清",
+        "霧峰澄清",
+        "烏日澄清",
+        "本堂澄清",
+        "澄清復健"
       ]
     },
     {
@@ -857,7 +862,7 @@
       "kind": "私人醫療法人",
       "backer": "林家（林新醫院）",
       "founded": "",
-      "website": "https://www.lshosp.com.tw/",
+      "website": "",
       "note": "台中南屯與烏日兩院區。",
       "patterns": [
         "林新醫療"
@@ -883,7 +888,7 @@
       "kind": "私人醫療法人",
       "backer": "阮家（阮綜合醫院）",
       "founded": "",
-      "website": "https://www.jkh.org.tw/",
+      "website": "https://www.yuanhosp.com.tw/",
       "note": "高雄苓雅老牌私院。",
       "patterns": [
         "阮綜合醫療"
@@ -1056,6 +1061,72 @@
       "note": "由地方政府設立的公立醫院（新竹市立馬偕兒童醫院等）。",
       "patterns": [
         "^.{2,3}[市縣]立"
+      ]
+    },
+    {
+      "id": "tachien",
+      "name": "大千醫療社團法人",
+      "short": "大千",
+      "kind": "私人醫療法人",
+      "backer": "大千醫療體系（苗栗）",
+      "founded": "",
+      "website": "https://www.tachien.com.tw/",
+      "note": "苗栗市大千綜合醫院與南勢醫院同屬一法人，是苗栗都會區最大民營醫院。",
+      "patterns": [
+        "大千綜合醫院",
+        "大千醫療社團法人"
+      ]
+    },
+    {
+      "id": "pinkun",
+      "name": "秉坤婦幼醫療體系",
+      "short": "秉坤",
+      "kind": "私人醫療法人",
+      "backer": "秉坤婦幼醫院（桃園）",
+      "founded": "",
+      "website": "",
+      "note": "桃園、平鎮兩院區的婦幼專科體系。",
+      "patterns": [
+        "秉坤婦幼"
+      ]
+    },
+    {
+      "id": "taan_tc",
+      "name": "臺安醫院（臺中）",
+      "short": "臺安(中)",
+      "kind": "私人醫療法人",
+      "backer": "臺中臺安醫院",
+      "founded": "",
+      "website": "",
+      "note": "臺中東區本院與北區雙十分院；與臺北「基督復臨安息日會臺安醫院」同名但無隸屬關係。",
+      "patterns": [
+        "^臺安醫院"
+      ]
+    },
+    {
+      "id": "hungen_tc",
+      "name": "宏恩醫院（臺中）",
+      "short": "宏恩(中)",
+      "kind": "私人醫療法人",
+      "backer": "臺中宏恩醫院",
+      "founded": "",
+      "website": "",
+      "note": "臺中南區本院與龍安分院；與臺北宏恩綜合醫院同名但非同一法人。",
+      "patterns": [
+        "^宏恩醫院"
+      ]
+    },
+    {
+      "id": "shsh",
+      "name": "馨蕙馨醫療體系",
+      "short": "馨蕙馨",
+      "kind": "私人醫療法人",
+      "backer": "馨蕙馨醫療體系（高雄）",
+      "founded": "2000",
+      "website": "https://www.shs-h.com.tw/",
+      "note": "高雄左營的婦幼專科體系，含馨蕙馨醫院與博愛蕙馨醫院。",
+      "patterns": [
+        "蕙馨醫院"
       ]
     }
   ]

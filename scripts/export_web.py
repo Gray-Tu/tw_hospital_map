@@ -37,6 +37,11 @@ def main():
         hospitals = json.load(f)
     with open(os.path.join(ROOT, "data", "groups.json"), encoding="utf-8") as f:
         gdata = json.load(f)
+    sites_path = os.path.join(ROOT, "data", "hospital_sites.json")
+    sites = {}
+    if os.path.exists(sites_path):
+        with open(sites_path, encoding="utf-8") as f:
+            sites = json.load(f)
 
     groups = {g["id"]: g for g in gdata["groups"]}
     for g in groups.values():
@@ -57,6 +62,7 @@ def main():
             "fam": fam,
             "lat": h.get("lat"), "lon": h.get("lon"), "gm": h.get("geo_method"),
             "note": h.get("note", ""), "mu": h["map_url"], "su": h["search_url"],
+            "web": sites.get(h["id"], ""),
         })
 
     # 各體系統計
@@ -109,7 +115,8 @@ def main():
         json.dump(out, f, ensure_ascii=False, separators=(",", ":"))
 
     located = sum(1 for h in slim if h["lat"])
-    print(f"匯出 {len(slim)} 家醫院（已定位 {located}）、{len(groups)} 個體系")
+    withsite = sum(1 for h in slim if h["web"])
+    print(f"匯出 {len(slim)} 家醫院（已定位 {located}、附官網 {withsite}）、{len(groups)} 個體系")
     print("體系規模 Top 15：")
     for gid, s in sorted(gstats.items(), key=lambda x: -x[1]["count"])[:15]:
         print(f"  {groups[gid]['name']:<34}{s['count']:>3} 家  {'、'.join(s['counties'][:6])}")
