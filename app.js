@@ -21,9 +21,17 @@ const S = {           // 篩選狀態
 let DATA, map, markerLayer, linkLayer, highlight, markers = new Map();
 let countyLayer, countyShapes = new Map();
 
-// 台灣本島視野（外島仍可平移過去，但預設不佔版面）
-const MAIN_ISLAND = [[21.85, 119.95], [25.35, 122.05]];
-const TW_BOUNDS = [[20.5, 117.5], [26.6, 123.0]];
+// 金門、馬祖真實位置離台灣太遠，整張圖會被拉得又寬又空。
+// 這裡把兩縣當剛體平移到台灣西側的空白海域（相對方位仍維持：金門在西南、馬祖在西北），
+// 地圖上會framed 起來並標示為示意位置。真實座標保留在 rlat/rlon。
+const INSETS = {
+  "金門縣": { dLat: -1.786, dLon: 1.389, label: "金門" },
+  "連江縣": { dLat: -0.845, dLon: 0.135, label: "馬祖" },
+};
+
+// 平移後的整體視野
+const MAIN_ISLAND = [[21.85, 119.28], [25.70, 122.03]];
+const TW_BOUNDS = [[20.9, 118.9], [26.3, 123.0]];
 
 const $ = (sel) => document.querySelector(sel);
 const el = (tag, cls, html) => {
@@ -38,10 +46,20 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) =>
 const norm = (s) => String(s ?? "").replace(/台/g, "臺").toLowerCase();
 
 /* ── 啟動 ─────────────────────────────────────────── */
-fetch("data/app_data.json")
+fetch("data/app_data.json", { cache: "no-cache" })
   .then((r) => r.json())
-  .then((d) => { DATA = d; init(); })
+  .then((d) => { DATA = d; applyInsets(); init(); })
   .catch((e) => { $("#subtitle").textContent = "資料載入失敗：" + e.message; });
+
+/* 把外島醫院座標搬到示意位置；真實座標存進 rlat/rlon 備查 */
+function applyInsets() {
+  DATA.hospitals.forEach((h) => {
+    const o = INSETS[h.ct];
+    if (!o || h.lat == null) return;
+    h.rlat = h.lat; h.rlon = h.lon;
+    h.lat += o.dLat; h.lon += o.dLon;
+  });
+}
 
 function init() {
   const m = DATA.meta;
@@ -80,9 +98,15 @@ function init() {
 
 /* ── 底圖：只畫台灣縣市界，不用外部圖磚 ─────────────── */
 function loadCounties() {
-  fetch("data/tw_counties.geojson")
+  fetch("data/tw_counties.geojson", { cache: "no-cache" })
     .then((r) => r.json())
     .then((geo) => {
+      geo.features.forEach((ft) => {
+        const o = INSETS[ft.properties.name];
+        if (!o) return;
+        ft.geometry.coordinates.forEach((poly) => poly.forEach((ring) =>
+          ring.forEach((pt) => { pt[0] += o.dLon; pt[1] += o.dLat; })));
+      });
       L.geoJSON(geo, {
         pane: "counties",
         renderer: L.canvas({ pane: "counties" }),
@@ -93,7 +117,8 @@ function loadCounties() {
           const n = DATA.county_counts[name] || 0;
           const c = DATA.county_center_counts[name] || 0;
           lyr.bindTooltip(
-            `${name}<br><small>${n} 家醫院${c ? "・醫學中心 " + c : ""}</small>`,
+            `${name}<br><small>${n} 家醫院${c ? "・醫學中心 " + c : ""}` +
+            `${INSETS[name] ? "<br>（示意位置，非實際距離）" : ""}</small>`,
             { sticky: true });
           lyr.on("click", () => {
             S.county = S.county === name ? "" : name;
@@ -103,9 +128,27 @@ function loadCounties() {
           });
         },
       }).addTo(countyLayer);
+      drawInsetFrames();
       paintCounties();
     })
     .catch(() => { /* 底圖載不到不影響資料點 */ });
+}
+
+/* 外島示意框：虛線框 + 縣名，讓讀者知道那不是真實距離 */
+function drawInsetFrames() {
+  Object.entries(INSETS).forEach(([county, o]) => {
+    const lyr = countyShapes.get(county);
+    if (!lyr) return;
+    const b = lyr.getBounds().pad(.2);
+    L.rectangle(b, {
+      pane: "counties", color: "#a9b4c4", weight: 1, dashArray: "4,4",
+      fill: false, interactive: false,
+    }).addTo(countyLayer);
+    L.marker([b.getNorth(), b.getCenter().lng], {
+      pane: "counties", interactive: false,
+      icon: L.divIcon({ className: "inset-label", html: o.label, iconSize: null }),
+    }).addTo(countyLayer);
+  });
 }
 
 function countyStyle(ft) {
@@ -224,6 +267,7 @@ function buildLegend() {
       `<i style="background:${FAMILY_COLOR[f]}"></i>${f}`));
   });
   box.appendChild(el("div", "sizes", "圈越大＝層級越高（醫學中心 ▸ 區域 ▸ 地區）"));
+  box.appendChild(el("div", "sizes", "虛線框內的金門、馬祖為示意位置，已縮短與台灣的距離"));
 
   let hidden = false;
   try { hidden = localStorage.getItem(LEGEND_KEY) === "1"; } catch (e) { /* 無痕模式等情境 */ }
@@ -416,6 +460,9 @@ function showHospital(h) {
     </div>`;
   if (h.gm === "town-centroid")
     html += `<p class="note" style="margin-top:12px">※ 此點為鄉鎮市區概略中心，非精確門牌座標。</p>`;
+  if (INSETS[h.ct])
+    html += `<p class="note" style="margin-top:8px">※ 地圖上${INSETS[h.ct].label}置於虛線框內的示意位置，` +
+            `已縮短與台灣的距離；實際座標為 ${h.rlat.toFixed(4)}, ${h.rlon.toFixed(4)}。</p>`;
 
   openDetail(html);
   bindDetailLinks();
