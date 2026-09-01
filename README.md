@@ -1,5 +1,7 @@
 # 台灣醫院經營版圖 tw_hospital_map
 
+**線上版：https://gray-tu.github.io/tw_hospital_map/**
+
 把全台健保特約醫院攤在地圖上，重點不是「哪裡有醫院」，而是**每家醫院背後是誰在經營**——
 哪些是財團、哪些是宗教團體、哪些是大學體系、哪些公立醫院其實委外給民間集團經營，
 以及各體系在台灣的布點策略與醫療特色。
@@ -62,6 +64,24 @@ python -m http.server 8765 --directory web
 ```
 
 重新下載原始資料（Windows PowerShell）：見 `scripts/fetch_raw.ps1`。
+
+## 部署
+
+`web/` 是完全靜態的（885 KB），沒有後端、沒有建置步驟、執行期不呼叫任何外部服務——
+Leaflet 已 vendor 進來，底圖是自家的縣市界 GeoJSON，所有路徑都是相對路徑，
+因此放在網站根目錄或子目錄都能跑。
+
+本專案以 `gh-pages` 分支發布，更新資料後重新部署：
+
+```bash
+python scripts/export_web.py
+git add -A && git commit -m "更新資料"
+git push origin main
+git subtree push --prefix web origin gh-pages
+```
+
+換到其他靜態代管（Netlify／Cloudflare Pages／S3／內網 Nginx）時，
+把 `web/` 當發布目錄即可，build command 留空。
 
 ## 已知限制
 
