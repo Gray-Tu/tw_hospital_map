@@ -2,3 +2,4 @@ __pycache__/
 *.pyc
 data/processed/geocode.log
 .claude/settings.local.json
+data/raw/tw_counties_src.json

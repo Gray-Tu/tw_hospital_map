@@ -6,7 +6,7 @@
 
 ## 成果
 
-- `web/` — 可直接開啟的地圖式 Web UI：點選任一醫院即顯示其經營體系、背後出資主體、
+- `web/` — 可直接開啟的地圖式 Web UI（底圖只畫台灣縣市界，不載入外部街道圖磚）：點選任一醫院即顯示其經營體系、背後出資主體、
   公辦民營關係、醫療特色與科別；點選左側體系可看該集團的完整版圖（縣市布點、層級組成、院所清單）。
 - `data/groups.json` — 83 個經營體系的人工彙整對照表（法人主體、背後財團／教會／政府、創立年、官網）。
 - `data/hospital_sites.json` — 132 家醫院的官方網站（每一個網址都實際連線驗證過）。
@@ -20,6 +20,7 @@
 | 區域醫院名冊 | [data.gov.tw/dataset/39281](https://data.gov.tw/dataset/39281) | 同上 |
 | 地區醫院名冊 | [data.gov.tw/dataset/39282](https://data.gov.tw/dataset/39282) | 同上 |
 | 座標 | [OpenStreetMap Nominatim](https://nominatim.openstreetmap.org/) | 以院名／地址地理編碼 |
+| 縣市界線 | [g0v/twgeojson](https://github.com/g0v/twgeojson)（內政部資料） | 地圖底圖，簡化後 144 KB |
 
 健保署 CSV 欄位包含：醫事機構代碼、名稱、種類、電話、地址、分區業務組、特約類別、
 服務項目、診療科別、終止合約或歇業日期、固定看診時段、備註、縣市別代碼、合約起日。
@@ -42,13 +43,18 @@
    同縣市同名機構的錯誤定位。命中不了才逐級退回：
    院名 → 院名＋縣市 → 縣市＋區＋路名 → 結構化查詢（street+city）→ 區中心。
    最終 450 家全部定位，446 家達街道級以上，行政區不符 0 家。
-6. **官網驗證**：`scripts/verify_sites.py` 逐一連線測試人工彙整的網址，
+6. **底圖**：不用 OSM 街道圖磚——那會把整片華南也畫進來、細節也蓋過資料點。
+   改成只畫台灣 22 縣市界線：`scripts/build_geo.py` 以 Douglas-Peucker 把
+   內政部縣市界從 9.3 MB／20.8 萬個節點簡化到 144 KB／7,741 個節點（保留澎湖、金門、馬祖），
+   地圖範圍鎖在台灣、縮放上限收在縣市尺度。點縣市可直接篩選該縣市。
+7. **官網驗證**：`scripts/verify_sites.py` 逐一連線測試人工彙整的網址，
    403/405 視為「站台存在只是擋程式化請求」，其餘連不通者一律不寫入，
    同時清掉 `groups.json` 裡失效的體系官網——寧可留搜尋連結，也不放死連結。
 
 ## 執行
 
 ```bash
+python scripts/build_geo.py        # 縣市界簡化 -> web/data/tw_counties.geojson
 python scripts/build_dataset.py    # 原始 CSV -> data/processed/hospitals.json
 python scripts/geocode.py          # 地理編碼（約 15-25 分鐘，結果有快取）
 python scripts/export_web.py       # 打包成 web/data/app_data.json
