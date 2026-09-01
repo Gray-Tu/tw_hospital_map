@@ -22,10 +22,12 @@ let DATA, map, markerLayer, linkLayer, highlight, markers = new Map();
 let countyLayer, countyShapes = new Map();
 
 // 金門、馬祖真實位置離台灣太遠，整張圖會被拉得又寬又空。
-// 這裡把兩縣當剛體平移到台灣西側的空白海域（相對方位仍維持：金門在西南、馬祖在西北），
-// 地圖上會framed 起來並標示為示意位置。真實座標保留在 rlat/rlon。
+// 這裡把兩縣當剛體平移到台灣西側的海域，外圍加虛線框標示為示意位置；
+// 相對方位維持不變（由南到北：澎湖 → 金門 → 馬祖）。
+// 金門真實緯度 24.39~24.53N 剛好落在澎湖與馬祖之間，因此只往東移、緯度不動。
+// 真實座標保留在 rlat/rlon。
 const INSETS = {
-  "金門縣": { dLat: -1.786, dLon: 1.389, label: "金門" },
+  "金門縣": { dLat: 0, dLon: 1.50, label: "金門" },
   "連江縣": { dLat: -0.845, dLon: 0.135, label: "馬祖" },
 };
 
